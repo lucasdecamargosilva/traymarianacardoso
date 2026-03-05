@@ -159,9 +159,9 @@
         }
         .mc-btn-trigger-ia {
             position: absolute;
-            top: 15px;
-            right: 15px;
-            z-index: 100;
+            top: 60px;
+            left: 15px;
+            z-index: 10;
             background: none;
             border: none;
             padding: 0;
@@ -287,19 +287,8 @@
         }
     `;
 
-    const stampImageHTML = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
-            <circle cx="40" cy="40" r="40" fill="#000000"/>
-            <g transform="translate(40,40)">
-                <!-- Ícone câmera -->
-                <path d="M-13,-6 L-9,-12 L9,-12 L13,-6 L16,-6 A2,2 0 0,1 18,-4 L18,10 A2,2 0 0,1 16,12 L-16,12 A2,2 0 0,1 -18,10 L-18,-4 A2,2 0 0,1 -16,-6 Z" fill="none" stroke="#fff" stroke-width="1.5"/>
-                <circle cx="0" cy="2" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
-                <circle cx="11" cy="-4" r="1.2" fill="#fff"/>
-            </g>
-            <!-- Texto PROVAR -->
-            <text x="40" y="66" text-anchor="middle" fill="#ffffff" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="1">PROVAR</text>
-        </svg>
-    `;
+    const stampImageHTML = `<img src="https://i.ibb.co/4wFQF9pb/provador-tag.webp" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
+
 
     const html = `
         <div id="mc-modal-ia">
@@ -317,7 +306,7 @@
                             <div class="mc-group">
                                 <label>Seu WhatsApp</label>
                                 <input type="tel" id="mc-phone" class="mc-input" placeholder="(11) 99999-9999" maxlength="15">
-                                <div id="mc-phone-error" class="mc-status-msg">Insira um número válido</div>
+                                <div id="mc-phone-error" class="mc-status-msg">Insira um n&#250;mero v&#225;lido</div>
                             </div>
                             <div id="mc-fields-top" style="display:none;">
                                 <div class="mc-input-row">
@@ -350,7 +339,7 @@
                         </div>
                         <div style="margin:20px 0 0;padding:12px 16px;background:#fff8e1;border-left:3px solid #f59e0b;">
                             <p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.5px;color:#92400e;line-height:1.6;text-align:center;">
-                                ⚠️ Se você escolheu a foto de costas, envie uma foto sua também de costas, se escolheu a frente, envie de frente.
+                                &#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas, se escolheu a frente, envie de frente.
                             </p>
                         </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
@@ -367,26 +356,18 @@
                         </div>
                         <div id="mc-result-actions-col" style="width:100%;">
                             <span class="mc-res-title" style="display:none;">Provador Virtual</span>
-                            <span class="mc-res-subtitle" style="display:none;">Simulação baseada no seu perfil corporal</span>
+                            <span class="mc-res-subtitle" style="display:none;">SIMULA&#199;&#195;O BASEADA NO SEU PERFIL CORPORAL</span>
                             <div class="mc-metrics-row" style="display:none;">
                                 <div class="mc-metric-card">
-                                    <span class="mc-metric-label">Altura</span>
-                                    <span class="mc-metric-value" id="mc-res-height">—</span>
-                                    <span class="mc-metric-unit">m</span>
+                                    <span class="mc-metric-label" id="mc-label-1">Altura</span>
+                                    <span class="mc-metric-value" id="mc-res-height">&mdash;</span>
+                                    <span class="mc-metric-unit" id="mc-unit-1">m</span>
                                 </div>
                                 <div class="mc-metric-card">
-                                    <span class="mc-metric-label">Peso</span>
-                                    <span class="mc-metric-value" id="mc-res-weight">—</span>
-                                    <span class="mc-metric-unit">kg</span>
+                                    <span class="mc-metric-label" id="mc-label-2">Peso</span>
+                                    <span class="mc-metric-value" id="mc-res-weight">&mdash;</span>
+                                    <span class="mc-metric-unit" id="mc-unit-2">kg</span>
                                 </div>
-                            </div>
-                            <div class="mc-size-card" style="display:none;">
-                                <div class="mc-size-circle" id="mc-res-letter-pc">M</div>
-                                <div class="mc-size-info">
-                                    <strong>Tamanho Recomendado</strong>
-                                    <span>Ajuste ideal para o seu perfil</span>
-                                </div>
-                                <i class="ph ph-seal-check mc-size-check"></i>
                             </div>
                             <div class="mc-res-mobile-only" style="border-top:1px solid var(--mc-border);border-bottom:1px solid var(--mc-border);padding:20px 0;width:100%;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;">
                                 <span style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--mc-text-light);">Tamanho Ideal</span>
@@ -394,7 +375,7 @@
                             </div>
                             <div class="mc-res-note" style="display:none;">
                                 <i class="ph ph-info"></i>
-                                <span>A simulação AI considera o caimento do tecido baseado na sua estrutura corporal informada.</span>
+                                <span>A simula&#231;&#227;o AI considera o caimento do tecido baseado na sua estrutura corporal informada.</span>
                             </div>
                             <button class="mc-btn-buy" id="mc-add-to-cart-btn">
                                 <i class="ph ph-shopping-cart"></i>
@@ -463,17 +444,39 @@
         for (const sel of [...trayImgContainers, ...fallbackContainers]) {
             const el = document.querySelector(sel);
             if (el) {
-                if (window.getComputedStyle(el).position === 'static') el.style.position = 'relative';
-                el.appendChild(openBtn);
+                // Adicionar ao body com posição absoluta calculada
+                document.body.appendChild(openBtn);
+                openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));';
+
+                function positionBtn() {
+                    const rect = el.getBoundingClientRect();
+                    openBtn.style.top = (rect.top + 25) + 'px';
+                    openBtn.style.left = (rect.right - 180) + 'px';
+                }
+                positionBtn();
+                window.addEventListener('scroll', positionBtn);
+                window.addEventListener('resize', positionBtn);
+
+                // Hover effect
+                openBtn.addEventListener('mouseenter', () => {
+                    openBtn.style.transform = 'scale(1.08)';
+                    openBtn.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.32))';
+                    openBtn.style.transition = 'transform 0.2s ease, filter 0.2s ease';
+                });
+                openBtn.addEventListener('mouseleave', () => {
+                    openBtn.style.transform = 'scale(1)';
+                    openBtn.style.filter = 'drop-shadow(0 2px 6px rgba(0,0,0,0.18))';
+                });
+
                 placed = true;
-                LOG.ok('Botão posicionado em: "' + sel + '"');
+                LOG.ok('Botão posicionado sobre: "' + sel + '" (posição calculada)');
                 break;
             }
         }
         if (!placed) {
-            openBtn.style.cssText = 'position:fixed;bottom:30px;right:20px;top:auto;width:60px;height:60px;';
             document.body.appendChild(openBtn);
-            LOG.warn('Nenhum container de imagem encontrado — botão fixado no canto da tela (fallback)');
+            openBtn.style.cssText = 'position:fixed;bottom:100px;left:20px;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;';
+            LOG.warn('Nenhum container encontrado — botão fixado no canto (fallback)');
         }
 
         const modal = document.getElementById('mc-modal-ia');
@@ -641,16 +644,32 @@
                     document.getElementById('mc-loading-box').style.display = 'none';
                     document.getElementById('mc-final-view-img').src = URL.createObjectURL(blob);
 
-                    const hVal = document.getElementById('mc-h-val').value;
-                    const wVal = document.getElementById('mc-w-val').value;
-                    const cVal = document.getElementById('mc-cin-val').value;
                     const resH = document.getElementById('mc-res-height');
                     const resW = document.getElementById('mc-res-weight');
-                    if (resH) resH.textContent = hVal ? (parseFloat(hVal) / 100).toFixed(2) : '—';
-                    if (resW) resW.textContent = wVal || (cVal ? cVal + ' cm' : '—');
+                    const label1 = document.getElementById('mc-label-1');
+                    const label2 = document.getElementById('mc-label-2');
+                    const unit1 = document.getElementById('mc-unit-1');
+                    const unit2 = document.getElementById('mc-unit-2');
 
-                    const letterPC = document.getElementById('mc-res-letter-pc');
-                    if (letterPC) letterPC.textContent = recommendedSize;
+                    if (currentProduct.category === 'bottom') {
+                        const cVal = document.getElementById('mc-cin-val').value;
+                        const qVal = document.getElementById('mc-quad-val').value;
+                        if (label1) label1.textContent = 'Cintura';
+                        if (label2) label2.textContent = 'Quadril';
+                        if (unit1) unit1.textContent = 'cm';
+                        if (unit2) unit2.textContent = 'cm';
+                        if (resH) resH.textContent = cVal || '\u2014';
+                        if (resW) resW.textContent = qVal || '\u2014';
+                    } else {
+                        const hVal = document.getElementById('mc-h-val').value;
+                        const wVal = document.getElementById('mc-w-val').value;
+                        if (label1) label1.textContent = 'Altura';
+                        if (label2) label2.textContent = 'Peso';
+                        if (unit1) unit1.textContent = 'm';
+                        if (unit2) unit2.textContent = 'kg';
+                        if (resH) resH.textContent = hVal ? (parseFloat(hVal) / 100).toFixed(2) : '\u2014';
+                        if (resW) resW.textContent = wVal || '\u2014';
+                    }
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
