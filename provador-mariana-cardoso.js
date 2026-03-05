@@ -448,7 +448,8 @@
 
                 // Ambos usam position:fixed para evitar overflow:hidden dos containers
                 document.body.appendChild(openBtn);
-                openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;';
+                // Mobile: z-index baixo para que o header (z-index maior) passe por cima ao scrollar
+                openBtn.style.cssText = 'position:fixed;z-index:' + (isMobile ? '20' : '50') + ';width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;';
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
@@ -462,9 +463,7 @@
                         openBtn.style.visibility = 'hidden';
                     } else {
                         openBtn.style.visibility = 'visible';
-                        // Mobile: clamp para nunca sobrepor a barra de avisos (fundo_info ~45px + header ~15px)
-                        const finalTop = isMobile ? Math.max(btnTop, 60) : btnTop;
-                        openBtn.style.top = finalTop + 'px';
+                        openBtn.style.top = btnTop + 'px';
                         openBtn.style.left = (rect.right - (isMobile ? 80 : 180)) + 'px';
                     }
                 }
