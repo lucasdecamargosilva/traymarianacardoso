@@ -172,9 +172,14 @@
             align-items: center;
             justify-content: center;
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
-            transition: filter 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            animation: mc-pulse-btn 2.5s infinite ease-in-out;
         }
-        .mc-btn-trigger-ia:hover { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.28)); }
+        .mc-btn-trigger-ia:hover { 
+            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.28));
+            animation-play-state: paused;
+            transform: scale(1.1) !important;
+        }
         .mc-btn-trigger-ia img { width: 100%; height: 100%; object-fit: contain; }
         #mc-modal-ia {
             display: none; position: fixed; inset: 0;
@@ -270,6 +275,11 @@
         .mc-status-msg {
             display: none; font-size: 9px; letter-spacing: 1px; color: #ef4444;
             margin-top: 8px; font-weight: 600; text-align: left; text-transform: uppercase;
+        }
+        @keyframes mc-pulse-btn {
+            0% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
+            50% { transform: scale(1.06); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
+            100% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
         }
         @keyframes mc-slide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
         @keyframes mc-pulse-text { 0%, 100% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } }
@@ -467,12 +477,16 @@
                 // Ambos usam position:fixed para evitar overflow:hidden dos containers
                 document.body.appendChild(openBtn);
                 // Mobile z-index igual ao desktop — evitamos overlap por threshold de posição
-                openBtn.style.cssText = `position:fixed;z-index:50;width:${btnSize};height:${btnSize};display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;`;
+                // Estilos básicos e dinâmicos via JS, o resto via classe CSS (inclusive animação)
+                openBtn.style.position = 'fixed';
+                openBtn.style.zIndex = '50';
+                openBtn.style.width = btnSize;
+                openBtn.style.height = btnSize;
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
                     const btnTop = rect.top + (isMobile ? 70 : 15);
-                    // Mobile: esconde quando o botão entraria na área do header fixo (~56px)
+                    // Mobile: esconde quando o botão entraria na área do header fixo (~80px)
                     // Desktop: esconde quando entraria no menu fixo (~120px)
                     const threshold = isMobile ? 80 : 120;
                     if (btnTop < threshold || rect.bottom < 0) {
@@ -486,16 +500,6 @@
                 positionBtn();
                 window.addEventListener('scroll', positionBtn);
                 window.addEventListener('resize', positionBtn);
-
-                // Hover effect (desktop)
-                openBtn.addEventListener('mouseenter', () => {
-                    openBtn.style.transform = 'scale(1.08)';
-                    openBtn.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.32))';
-                });
-                openBtn.addEventListener('mouseleave', () => {
-                    openBtn.style.transform = 'scale(1)';
-                    openBtn.style.filter = 'drop-shadow(0 2px 6px rgba(0,0,0,0.18))';
-                });
 
                 placed = true;
                 LOG.ok('Botão posicionado (' + (isMobile ? 'mobile' : 'desktop') + ') sobre: "' + sel + '" (position:fixed)');
