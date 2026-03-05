@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Preview — Provador Virtual | Mariana Cardoso</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8f8f8;
+            color: #000;
+        }
+
+        /* ── HEADER SIMULADO ───────────────────── */
+        .fake-header {
+            background: #fff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 18px 40px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .fake-header img {
+            height: 36px;
+            width: auto;
+        }
+        .fake-nav {
+            display: flex;
+            gap: 28px;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: #555;
+        }
+
+        /* ── BREADCRUMB ────────────────────────── */
+        .breadcrumb {
+            padding: 14px 40px;
+            font-size: 11px;
+            color: #999;
+            letter-spacing: 0.5px;
+        }
+        .breadcrumb span { color: #000; }
+
+        /* ── LAYOUT PRODUTO ────────────────────── */
+        .product-detail {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 20px 40px 60px;
+            display: flex;
+            gap: 60px;
+            align-items: flex-start;
+        }
+
+        /* ── COLUNA ESQUERDA (galeria) ─────────── */
+        .product-colum-left {
+            flex: 0 0 500px;
+        }
+        .box-gallery {
+            display: flex;
+            gap: 12px;
+        }
+        .nav-images {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            width: 72px;
+        }
+        .nav-images .item img {
+            width: 72px;
+            height: 90px;
+            object-fit: cover;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            opacity: 0.6;
+            transition: opacity 0.2s;
+        }
+        .nav-images .item img:hover, .nav-images .item img.active {
+            opacity: 1;
+            border-color: #000;
+        }
+
+        /* image-show — onde o botão do provador é injetado */
+        .image-show {
+            flex: 1;
+            position: relative;
+        }
+        .image-show .list .item img {
+            width: 100%;
+            aspect-ratio: 3/4;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* ── COLUNA DIREITA (info) ─────────────── */
+        .product-colum-right {
+            flex: 1;
+            padding-top: 8px;
+        }
+        .product-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            line-height: 1.3;
+        }
+        .product-sku {
+            font-size: 11px;
+            color: #999;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+        }
+        .product-price {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 6px;
+        }
+        .product-price-old {
+            font-size: 13px;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 20px;
+        }
+        .product-installments {
+            font-size: 12px;
+            color: #555;
+            margin-bottom: 28px;
+        }
+
+        /* variantes */
+        .variants-label {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .variants {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .variant-btn {
+            border: 1px solid #ccc;
+            background: #fff;
+            padding: 10px 16px;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .variant-btn:hover, .variant-btn.active {
+            border-color: #000;
+            background: #000;
+            color: #fff;
+        }
+
+        /* botão comprar */
+        #form_comprar { margin-top: 0; }
+        .btn-comprar {
+            width: 100%;
+            background: #000;
+            color: #fff;
+            border: 1px solid #000;
+            padding: 18px;
+            font-family: 'Inter', sans-serif;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-bottom: 12px;
+        }
+        .btn-comprar:hover { background: #fff; color: #000; }
+        .btn-wishlist {
+            width: 100%;
+            background: #fff;
+            color: #000;
+            border: 1px solid #ccc;
+            padding: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn-wishlist:hover { border-color: #000; }
+
+        .divider { border: none; border-top: 1px solid #eee; margin: 24px 0; }
+
+        .product-benefits {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #555;
+        }
+        .benefit-icon {
+            width: 18px;
+            height: 18px;
+            flex-shrink: 0;
+        }
+
+        /* ── BADGE PREVIEW ─────────────────────── */
+        .preview-badge {
+            position: fixed;
+            bottom: 16px;
+            left: 16px;
+            background: #000;
+            color: #fff;
+            padding: 8px 14px;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            z-index: 99999;
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            .fake-header { padding: 14px 20px; }
+            .product-detail { flex-direction: column; padding: 16px 20px 60px; gap: 32px; }
+            .product-colum-left { flex: none; width: 100%; }
+            .breadcrumb { padding: 12px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Simula a URL de produto da Tray (para o script detectar) -->
+    <script>
+        // Override do pathname para simular página de produto Tray
+        history.replaceState({}, '', '/produto/camiseta-oversized-branca');
+    </script>
+
+    <!-- HEADER SIMULADO -->
+    <header class="fake-header">
+        <img
+            src="https://images.tcdn.com.br/files/1173244/themes/75/img/settings/logo-new.svg"
+            alt="Mariana Cardoso"
+            onerror="this.style.display='none'; this.parentElement.insertAdjacentHTML('afterbegin','<span style=\'font-size:18px;font-weight:700;letter-spacing:2px;\'>MARIANA CARDOSO</span>')"
+        >
+        <nav class="fake-nav">
+            <span>Novidades</span>
+            <span>Camisetas</span>
+            <span>Calças</span>
+            <span>Sale</span>
+        </nav>
+    </header>
+
+    <!-- BREADCRUMB SIMULADO -->
+    <div class="breadcrumb">
+        Início / Camisetas / <span>Camiseta Oversized Branca</span>
+    </div>
+
+    <!-- PRODUTO SIMULADO (estrutura Tray) -->
+    <div id="product-container" class="product-detail">
+
+        <!-- COLUNA ESQUERDA — galeria -->
+        <div class="product-colum-left">
+            <div class="box-gallery flex">
+
+                <!-- Miniaturas -->
+                <div class="nav-images">
+                    <div class="item">
+                        <img src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=200&q=80" alt="Foto 1" class="active">
+                    </div>
+                    <div class="item">
+                        <img src="https://images.unsplash.com/photo-1503341504253-dff4815485f1?w=200&q=80" alt="Foto 2">
+                    </div>
+                    <div class="item">
+                        <img src="https://images.unsplash.com/photo-1562157873-818bc0726f68?w=200&q=80" alt="Foto 3">
+                    </div>
+                </div>
+
+                <!-- Imagem principal — .image-show é onde o botão do provador será injetado -->
+                <div class="image-show">
+                    <div class="list">
+                        <div class="item">
+                            <div class="box-img index-list active" data-id="1">
+                                <div class="zoom">
+                                    <img
+                                        src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=720&q=80"
+                                        data-src="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=720&q=80"
+                                        data-lazy="https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=720&q=80"
+                                        alt="Camiseta Oversized Branca"
+                                    >
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- COLUNA DIREITA — informações -->
+        <div class="product-colum-right">
+            <h1 class="product-name">Camiseta Oversized Branca</h1>
+            <p class="product-sku">Ref: MC-001 • Em estoque</p>
+
+            <div class="product-price">R$ 189,90</div>
+            <div class="product-price-old">R$ 239,90</div>
+            <div class="product-installments">ou 6x de R$ 31,65 sem juros</div>
+
+            <form id="form_comprar" method="post">
+                <div class="variants-label">Tamanho</div>
+                <div class="variants">
+                    <button type="button" class="variant-btn" data-value="XP" value="XP">XP</button>
+                    <button type="button" class="variant-btn active" data-value="P" value="P">P</button>
+                    <button type="button" class="variant-btn" data-value="M" value="M">M</button>
+                    <button type="button" class="variant-btn" data-value="G" value="G">G</button>
+                    <button type="button" class="variant-btn" data-value="XG" value="XG">XG</button>
+                    <button type="button" class="variant-btn" data-value="XXG" value="XXG">XXG</button>
+                </div>
+
+                <button type="submit" class="btn-comprar">Adicionar ao Carrinho</button>
+                <button type="button" class="btn-wishlist">♡ Adicionar à Wishlist</button>
+            </form>
+
+            <hr class="divider">
+
+            <div class="product-benefits">
+                <div class="benefit-item">
+                    <svg class="benefit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                    Frete grátis acima de R$ 299
+                </div>
+                <div class="benefit-item">
+                    <svg class="benefit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>
+                    Troca grátis em até 30 dias
+                </div>
+                <div class="benefit-item">
+                    <svg class="benefit-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    Pagamento 100% seguro
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- BADGE DE PREVIEW -->
+    <div class="preview-badge">⚡ Preview — Provador Mariana Cardoso</div>
+
+    <!-- SCRIPT DO PROVADOR -->
+    <script src="provador-mariana-cardoso.js"></script>
+
+    <!-- Interatividade simples das miniaturas -->
+    <script>
+        document.querySelectorAll('.nav-images .item img').forEach((thumb, i) => {
+            thumb.addEventListener('click', () => {
+                document.querySelectorAll('.nav-images .item img').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+                const mainImg = document.querySelector('.image-show .zoom img');
+                if (mainImg) mainImg.src = thumb.src.replace('w=200', 'w=720');
+            });
+        });
+
+        document.querySelectorAll('.variant-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+    </script>
+
+</body>
+</html>

@@ -1,8 +1,20 @@
 (function () {
-    const WEBHOOK_PROVA = 'https://n8n.segredosdodrop.com/webhook/quantic-materialize';
+    // ─── LOG HELPER ───────────────────────────────────────────────────────────────
+    const LOG = {
+        prefix: '%c[Provador MC]',
+        style: 'background:#000;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;',
+        info: function (msg, data) { console.log(LOG.prefix + ' ' + msg, LOG.style, ...(data !== undefined ? [data] : [])); },
+        ok: function (msg, data) { console.log('%c[Provador MC] ✓ ' + msg, 'background:#16a34a;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
+        warn: function (msg, data) { console.warn('%c[Provador MC] ⚠ ' + msg, 'background:#d97706;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
+        error: function (msg, data) { console.error('%c[Provador MC] ✗ ' + msg, 'background:#dc2626;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
+        group: function (label) { console.groupCollapsed(LOG.prefix + ' ' + label, LOG.style); },
+        end: function () { console.groupEnd(); },
+    };
 
-    // ─── LOGO DA LOJA ─────────────────────────────────────────────────────────────
+    const WEBHOOK_PROVA = 'https://n8n.segredosdodrop.com/webhook/quantic-materialize';
     const LOGO_URL = 'https://images.tcdn.com.br/files/1173244/themes/75/img/settings/logo-new.svg';
+
+    LOG.info('Script carregado — Provador Virtual Mariana Cardoso (Tray)');
 
     // ─── TABELAS DE TAMANHOS ──────────────────────────────────────────────────────
 
@@ -31,17 +43,24 @@
 
     function detectProduct(name) {
         const n = name.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        if (/tailoring/.test(n) || /\d\/\d\s*short/.test(n) || /\b(1\/5|2\/5|3\/5|4\/5)\b/.test(n)) return { category: 'bottom', fit: 'tailoring' };
-        if (/underwear|cueca/.test(n)) return { category: 'bottom', fit: 'underwear' };
-        if (/sweatpant|sweatshort|sweat pant|sweat short|calca|bermuda/.test(n)) return { category: 'bottom', fit: 'sweat' };
-        if (/henley/.test(n)) return { category: 'top', fit: 'boxyHenley' };
-        if (/boxy.*(hoodie|crewneck|crew)/.test(n) || /(hoodie|crewneck|crew).*boxy/.test(n)) return { category: 'top', fit: 'boxyHoodie' };
-        if (/puffer|jacket/.test(n)) return { category: 'top', fit: 'puffer' };
-        if (/vest/.test(n)) return { category: 'top', fit: 'vest' };
-        if (/(hoodie|hoodie zip|half zip|crewneck|crew neck)/.test(n) && !/oversized|boxy|short sleeve/.test(n)) return { category: 'top', fit: 'hoodie' };
-        if (/oversized.*(hoodie|crewneck|crew|short sleeve)/.test(n) || /short sleeve.*(hoodie|crewneck)/.test(n)) return { category: 'top', fit: 'oversizedSS' };
-        if (/oversized|boxy tee|2\/4/.test(n)) return { category: 'top', fit: 'oversized' };
-        return { category: 'top', fit: 'regular' };
+        LOG.group('Detecção de produto');
+        LOG.info('Nome bruto: "' + name + '"');
+        LOG.info('Nome normalizado: "' + n + '"');
+        let result;
+        if (/tailoring/.test(n) || /\d\/\d\s*short/.test(n) || /\b(1\/5|2\/5|3\/5|4\/5)\b/.test(n)) result = { category: 'bottom', fit: 'tailoring' };
+        else if (/underwear|cueca/.test(n)) result = { category: 'bottom', fit: 'underwear' };
+        else if (/sweatpant|sweatshort|sweat pant|sweat short|calca|bermuda/.test(n)) result = { category: 'bottom', fit: 'sweat' };
+        else if (/henley/.test(n)) result = { category: 'top', fit: 'boxyHenley' };
+        else if (/boxy.*(hoodie|crewneck|crew)/.test(n) || /(hoodie|crewneck|crew).*boxy/.test(n)) result = { category: 'top', fit: 'boxyHoodie' };
+        else if (/puffer|jacket/.test(n)) result = { category: 'top', fit: 'puffer' };
+        else if (/vest/.test(n)) result = { category: 'top', fit: 'vest' };
+        else if (/(hoodie|hoodie zip|half zip|crewneck|crew neck)/.test(n) && !/oversized|boxy|short sleeve/.test(n)) result = { category: 'top', fit: 'hoodie' };
+        else if (/oversized.*(hoodie|crewneck|crew|short sleeve)/.test(n) || /short sleeve.*(hoodie|crewneck)/.test(n)) result = { category: 'top', fit: 'oversizedSS' };
+        else if (/oversized|boxy tee|2\/4/.test(n)) result = { category: 'top', fit: 'oversized' };
+        else result = { category: 'top', fit: 'regular' };
+        LOG.ok('Produto detectado:', result);
+        LOG.end();
+        return result;
     }
 
     // ─── CÁLCULOS DE MEDIDAS ──────────────────────────────────────────────────────
@@ -51,6 +70,7 @@
         let circ = 0.65 * peso + 56;
         const imc = peso / Math.pow(altura / 100, 2);
         if (imc > 30) circ += 4; else if (imc > 25) circ += 2;
+        LOG.info('Tórax estimado: ' + circ.toFixed(1) + 'cm  |  IMC: ' + imc.toFixed(1));
         return circ;
     }
 
@@ -71,6 +91,11 @@
         const folga = { regular: 4, oversized: 8, oversizedSS: 8, hoodie: 6, boxyHoodie: 12, puffer: 10, vest: 5, boxyHenley: 9 };
         const larguraAlvo = torax / 2 + (folga[fit] || 4);
         recommendedSize = SIZES_TOP[findClosest(GRADE[fit], larguraAlvo)];
+        LOG.group('Cálculo de tamanho (top)');
+        LOG.info('Fit: ' + fit + '  |  Folga: ' + (folga[fit] || 4) + 'cm');
+        LOG.info('Largura alvo (meia-tórax + folga): ' + larguraAlvo.toFixed(1) + 'cm');
+        LOG.ok('Tamanho recomendado: ' + recommendedSize);
+        LOG.end();
         document.getElementById('mc-res-letter').innerText = recommendedSize;
     }
 
@@ -82,11 +107,19 @@
         if (fit === 'tailoring') { gradeC = GRADE.bottomTailoring; gradeQ = GRADE.quadrilTailoring; sizes = SIZES_BOTTOM; }
         else if (fit === 'underwear') { gradeC = GRADE.underwear; gradeQ = GRADE.quadrilUnderwear; sizes = SIZES_BOTTOM_SW; }
         else { gradeC = GRADE.bottomSweat; gradeQ = GRADE.quadrilSweat; sizes = SIZES_BOTTOM_SW; }
-        recommendedSize = sizes[Math.max(findClosest(gradeC, cintura / 2), findClosest(gradeQ, quadril / 2))];
+        const idxC = findClosest(gradeC, cintura / 2);
+        const idxQ = findClosest(gradeQ, quadril / 2);
+        recommendedSize = sizes[Math.max(idxC, idxQ)];
+        LOG.group('Cálculo de tamanho (bottom)');
+        LOG.info('Fit: ' + fit + '  |  Cintura: ' + cintura + 'cm  |  Quadril: ' + quadril + 'cm');
+        LOG.info('Índice cintura: ' + idxC + '  |  Índice quadril: ' + idxQ + '  →  usado: ' + Math.max(idxC, idxQ));
+        LOG.ok('Tamanho recomendado: ' + recommendedSize);
+        LOG.end();
         document.getElementById('mc-res-letter').innerText = recommendedSize;
     }
 
     function calculateFinalSize() {
+        LOG.info('Calculando tamanho final...');
         if (currentProduct.category === 'top') calcTop(currentProduct.fit);
         else calcBottom(currentProduct.fit);
     }
@@ -124,8 +157,6 @@
             --mc-text: #000000;
             --mc-text-light: #666666;
         }
-
-        /* ── BOTÃO SELO ─────────────────────────────────────────────────────────── */
         .mc-btn-trigger-ia {
             position: absolute;
             top: 15px;
@@ -143,372 +174,120 @@
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
             transition: filter 0.2s ease;
         }
-        .mc-btn-trigger-ia:hover {
-            filter: drop-shadow(0 4px 12px rgba(0,0,0,0.28));
-        }
-        .mc-btn-trigger-ia img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-        }
-
-        /* ── MODAL ──────────────────────────────────────────────────────────────── */
+        .mc-btn-trigger-ia:hover { filter: drop-shadow(0 4px 12px rgba(0,0,0,0.28)); }
+        .mc-btn-trigger-ia img { width: 100%; height: 100%; object-fit: contain; }
         #mc-modal-ia {
-            display: none;
-            position: fixed;
-            inset: 0;
+            display: none; position: fixed; inset: 0;
             background: rgba(255,255,255,0.98);
-            z-index: 999999;
-            align-items: center;
-            justify-content: center;
+            z-index: 999999; align-items: center; justify-content: center;
             font-family: 'Inter', sans-serif;
         }
         .mc-card-ia {
-            background: var(--mc-bg);
-            width: 100%;
-            max-width: 480px;
-            padding: 0;
-            position: relative;
-            color: var(--mc-text);
-            border: 1px solid var(--mc-border);
-            max-height: 94vh;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
+            background: var(--mc-bg); width: 100%; max-width: 480px;
+            padding: 0; position: relative; color: var(--mc-text);
+            border: 1px solid var(--mc-border); max-height: 94vh;
+            display: flex; flex-direction: column; overflow: hidden;
         }
-        .mc-content-scroll {
-            padding: 40px 30px;
-            overflow-y: auto;
-            flex: 1;
-            text-align: center;
-        }
+        .mc-content-scroll { padding: 40px 30px; overflow-y: auto; flex: 1; text-align: center; }
         .mc-close-ia {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: none;
-            border: none;
-            color: var(--mc-text);
-            cursor: pointer;
-            font-size: 24px;
-            z-index: 100;
-            font-weight: 300;
+            position: absolute; top: 20px; right: 20px;
+            background: none; border: none; color: var(--mc-text);
+            cursor: pointer; font-size: 24px; z-index: 100; font-weight: 300;
         }
         .mc-tips-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 10px;
-            padding: 20px 0;
-            margin: 20px 0;
-            border-top: 1px solid var(--mc-gray);
-            border-bottom: 1px solid var(--mc-gray);
+            display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;
+            padding: 20px 0; margin: 20px 0;
+            border-top: 1px solid var(--mc-gray); border-bottom: 1px solid var(--mc-gray);
         }
         .mc-tip-item {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 8px;
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            color: var(--mc-text-light);
+            display: flex; flex-direction: column; align-items: center; gap: 8px;
+            font-size: 9px; font-weight: 600; letter-spacing: 1px;
+            text-transform: uppercase; color: var(--mc-text-light);
         }
         .mc-tip-item i { color: var(--mc-primary); font-size: 20px; }
-        .mc-lead-form {
-            margin: 30px 0 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            text-align: left;
-        }
+        .mc-lead-form { margin: 30px 0 20px; display: flex; flex-direction: column; gap: 20px; text-align: left; }
         .mc-input-row { display: flex; gap: 15px; }
         .mc-group { flex: 1; }
         .mc-group label {
-            display: block;
-            font-size: 9px;
-            font-weight: 600;
-            letter-spacing: 1.5px;
-            color: var(--mc-text);
-            margin-bottom: 8px;
-            text-transform: uppercase;
+            display: block; font-size: 9px; font-weight: 600;
+            letter-spacing: 1.5px; color: var(--mc-text); margin-bottom: 8px; text-transform: uppercase;
         }
         .mc-input {
-            width: 100%;
-            padding: 15px;
-            border: 1px solid var(--mc-border);
-            font-size: 13px;
-            font-family: 'Inter', sans-serif;
-            background: transparent;
-            color: var(--mc-text);
-            outline: none;
-            box-sizing: border-box;
+            width: 100%; padding: 15px; border: 1px solid var(--mc-border);
+            font-size: 13px; font-family: 'Inter', sans-serif;
+            background: transparent; color: var(--mc-text); outline: none; box-sizing: border-box;
         }
         .mc-input:focus { border-width: 2px; padding: 14px; }
-        .mc-input-hint {
-            font-size: 9px;
-            color: var(--mc-text-light);
-            letter-spacing: 0.5px;
-            margin-top: 6px;
-        }
+        .mc-input-hint { font-size: 9px; color: var(--mc-text-light); letter-spacing: 0.5px; margin-top: 6px; }
         .mc-btn-black {
-            background: var(--mc-primary);
-            color: var(--mc-bg);
-            border: 1px solid var(--mc-primary);
-            width: 100%;
-            padding: 18px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-top: 20px;
-            transition: 0.3s;
+            background: var(--mc-primary); color: var(--mc-bg);
+            border: 1px solid var(--mc-primary); width: 100%; padding: 18px;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 20px; transition: 0.3s;
         }
-        .mc-btn-black:disabled {
-            background: var(--mc-gray);
-            color: #999;
-            border-color: var(--mc-gray);
-            cursor: not-allowed;
-        }
-        .mc-btn-black:not(:disabled):hover {
-            background: var(--mc-bg);
-            color: var(--mc-primary);
-        }
+        .mc-btn-black:disabled { background: var(--mc-gray); color: #999; border-color: var(--mc-gray); cursor: not-allowed; }
+        .mc-btn-black:not(:disabled):hover { background: var(--mc-bg); color: var(--mc-primary); }
         .mc-btn-buy {
-            background: var(--mc-primary);
-            color: var(--mc-bg);
-            border: 1px solid var(--mc-primary);
-            width: 100%;
-            padding: 20px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 12px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-bottom: 15px;
-            transition: 0.3s;
+            background: var(--mc-primary); color: var(--mc-bg);
+            border: 1px solid var(--mc-primary); width: 100%; padding: 20px;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 12px;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-bottom: 15px; transition: 0.3s;
         }
         .mc-btn-buy:hover { background: var(--mc-bg); color: var(--mc-primary); }
         .mc-btn-outline {
-            background: var(--mc-bg);
-            color: var(--mc-primary);
-            border: 1px solid var(--mc-border);
-            width: 100%;
-            padding: 18px;
-            font-family: 'Inter', sans-serif;
-            font-weight: 600;
-            font-size: 11px;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: 0.3s;
+            background: var(--mc-bg); color: var(--mc-primary);
+            border: 1px solid var(--mc-border); width: 100%; padding: 18px;
+            font-family: 'Inter', sans-serif; font-weight: 600; font-size: 11px;
+            letter-spacing: 2px; text-transform: uppercase; cursor: pointer; transition: 0.3s;
         }
         .mc-btn-outline:hover { background: var(--mc-primary); color: var(--mc-bg); }
         .mc-powered-footer {
-            background: var(--mc-bg);
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            flex-shrink: 0;
-            border-top: 1px solid var(--mc-gray);
+            background: var(--mc-bg); padding: 20px;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            flex-shrink: 0; border-top: 1px solid var(--mc-gray);
         }
         .mc-quantic-logo { height: 18px; filter: brightness(0); }
         .mc-status-msg {
-            display: none;
-            font-size: 9px;
-            letter-spacing: 1px;
-            color: #ef4444;
-            margin-top: 8px;
-            font-weight: 600;
-            text-align: left;
-            text-transform: uppercase;
+            display: none; font-size: 9px; letter-spacing: 1px; color: #ef4444;
+            margin-top: 8px; font-weight: 600; text-align: left; text-transform: uppercase;
         }
         @keyframes mc-slide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
         @keyframes mc-pulse-text { 0%, 100% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } }
         .mc-content-scroll::-webkit-scrollbar { width: 4px; }
         .mc-content-scroll::-webkit-scrollbar-thumb { background: #e5e5e5; }
 
-        /* ════════════════════════════════════════════
-           LAYOUT PC — TELA DE RESULTADO
-        ════════════════════════════════════════════ */
         @media (min-width: 768px) {
-            .mc-card-ia.is-result {
-                width: 820px !important;
-                max-width: 90vw !important;
-                height: 560px !important;
-                border-radius: 0 !important;
-            }
+            .mc-card-ia.is-result { width: 820px !important; max-width: 90vw !important; height: 560px !important; border-radius: 0 !important; }
             .mc-card-ia.is-result #mc-header-provador,
             .mc-card-ia.is-result .mc-powered-footer { display: none !important; }
-            .mc-card-ia.is-result .mc-content-scroll {
-                padding: 0 !important;
-                height: 100% !important;
-                overflow: hidden !important;
-                display: flex !important;
-                flex-direction: column !important;
-            }
-            .mc-card-ia.is-result #mc-step-result {
-                display: flex !important;
-                flex-direction: row !important;
-                width: 100%;
-                height: 100%;
-                align-items: stretch;
-            }
-            .mc-card-ia.is-result #mc-result-img-col {
-                width: 45% !important;
-                height: 100% !important;
-                margin: 0 !important;
-                border: none !important;
-                border-right: 1px solid var(--mc-border) !important;
-                position: relative !important;
-                flex-shrink: 0;
-            }
-            .mc-card-ia.is-result #mc-result-img-col img {
-                position: absolute !important;
-                top: 0; left: 0;
-                width: 100% !important;
-                height: 100% !important;
-                object-fit: cover !important;
-                object-position: top center !important;
-            }
-            .mc-card-ia.is-result #mc-result-actions-col {
-                width: 55% !important;
-                height: 100% !important;
-                padding: 40px !important;
-                display: flex !important;
-                flex-direction: column;
-                justify-content: center;
-                box-sizing: border-box;
-                overflow-y: auto;
-            }
-            .mc-card-ia.is-result .mc-res-title {
-                display: block !important;
-                font-size: 20px;
-                font-weight: 700;
-                letter-spacing: 2px;
-                text-transform: uppercase;
-                color: var(--mc-text);
-                margin-bottom: 4px;
-            }
-            .mc-card-ia.is-result .mc-res-subtitle {
-                display: block !important;
-                font-size: 11px;
-                color: var(--mc-text-light);
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                margin-bottom: 30px;
-            }
+            .mc-card-ia.is-result .mc-content-scroll { padding: 0 !important; height: 100% !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; }
+            .mc-card-ia.is-result #mc-step-result { display: flex !important; flex-direction: row !important; width: 100%; height: 100%; align-items: stretch; }
+            .mc-card-ia.is-result #mc-result-img-col { width: 45% !important; height: 100% !important; margin: 0 !important; border: none !important; border-right: 1px solid var(--mc-border) !important; position: relative !important; flex-shrink: 0; }
+            .mc-card-ia.is-result #mc-result-img-col img { position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important; object-fit: cover !important; object-position: top center !important; }
+            .mc-card-ia.is-result #mc-result-actions-col { width: 55% !important; height: 100% !important; padding: 40px !important; display: flex !important; flex-direction: column; justify-content: center; box-sizing: border-box; overflow-y: auto; }
+            .mc-card-ia.is-result .mc-res-title { display: block !important; font-size: 20px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--mc-text); margin-bottom: 4px; }
+            .mc-card-ia.is-result .mc-res-subtitle { display: block !important; font-size: 11px; color: var(--mc-text-light); letter-spacing: 1px; text-transform: uppercase; margin-bottom: 30px; }
             .mc-card-ia.is-result .mc-metrics-row { display: flex !important; gap: 15px; margin-bottom: 30px; }
-            .mc-card-ia.is-result .mc-metric-card {
-                flex: 1;
-                background: transparent;
-                border: 1px solid var(--mc-border);
-                border-radius: 0;
-                padding: 16px;
-            }
-            .mc-card-ia.is-result .mc-metric-label {
-                font-size: 9px;
-                font-weight: 600;
-                text-transform: uppercase;
-                letter-spacing: 1.5px;
-                color: var(--mc-text-light);
-                margin-bottom: 6px;
-                display: block;
-            }
+            .mc-card-ia.is-result .mc-metric-card { flex: 1; background: transparent; border: 1px solid var(--mc-border); border-radius: 0; padding: 16px; }
+            .mc-card-ia.is-result .mc-metric-label { font-size: 9px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.5px; color: var(--mc-text-light); margin-bottom: 6px; display: block; }
             .mc-card-ia.is-result .mc-metric-value { font-size: 20px; font-weight: 700; color: var(--mc-text); }
             .mc-card-ia.is-result .mc-metric-unit { font-size: 12px; color: var(--mc-text-light); margin-left: 2px; }
-            .mc-card-ia.is-result .mc-size-card {
-                display: flex !important;
-                align-items: center;
-                gap: 16px;
-                background: var(--mc-gray);
-                border: 1px solid var(--mc-border);
-                border-radius: 0;
-                padding: 20px;
-                margin-bottom: 24px;
-            }
-            .mc-card-ia.is-result .mc-size-circle {
-                width: 44px;
-                height: 44px;
-                border-radius: 50%;
-                background: var(--mc-primary);
-                color: var(--mc-bg);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 18px;
-                font-weight: 700;
-                flex-shrink: 0;
-            }
+            .mc-card-ia.is-result .mc-size-card { display: flex !important; align-items: center; gap: 16px; background: var(--mc-gray); border: 1px solid var(--mc-border); border-radius: 0; padding: 20px; margin-bottom: 24px; }
+            .mc-card-ia.is-result .mc-size-circle { width: 44px; height: 44px; border-radius: 50%; background: var(--mc-primary); color: var(--mc-bg); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; flex-shrink: 0; }
             .mc-card-ia.is-result .mc-size-info { flex: 1; }
-            .mc-card-ia.is-result .mc-size-info strong {
-                display: block;
-                font-size: 11px;
-                font-weight: 600;
-                color: var(--mc-text);
-                margin-bottom: 4px;
-                letter-spacing: 1.5px;
-                text-transform: uppercase;
-            }
-            .mc-card-ia.is-result .mc-size-info span {
-                font-size: 9px;
-                color: var(--mc-text-light);
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                display: block;
-            }
+            .mc-card-ia.is-result .mc-size-info strong { display: block; font-size: 11px; font-weight: 600; color: var(--mc-text); margin-bottom: 4px; letter-spacing: 1.5px; text-transform: uppercase; }
+            .mc-card-ia.is-result .mc-size-info span { font-size: 9px; color: var(--mc-text-light); letter-spacing: 1px; text-transform: uppercase; display: block; }
             .mc-card-ia.is-result .mc-size-check { color: var(--mc-primary); font-size: 24px; flex-shrink: 0; }
-            .mc-card-ia.is-result .mc-res-note {
-                display: flex !important;
-                align-items: flex-start;
-                gap: 8px;
-                font-size: 10px;
-                color: var(--mc-text-light);
-                font-style: italic;
-                letter-spacing: 1px;
-                margin-bottom: 24px;
-                line-height: 1.5;
-            }
+            .mc-card-ia.is-result .mc-res-note { display: flex !important; align-items: flex-start; gap: 8px; font-size: 10px; color: var(--mc-text-light); font-style: italic; letter-spacing: 1px; margin-bottom: 24px; line-height: 1.5; }
             .mc-card-ia.is-result .mc-res-note i { flex-shrink: 0; margin-top: 1px; font-size: 14px; }
-            .mc-card-ia.is-result .mc-btn-buy {
-                border-radius: 0 !important;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 8px;
-                font-size: 11px !important;
-                padding: 18px !important;
-                margin-bottom: 12px;
-                font-weight: 600;
-                letter-spacing: 2px !important;
-                text-transform: uppercase !important;
-            }
-            .mc-card-ia.is-result .mc-btn-outline {
-                border-radius: 0 !important;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                font-size: 11px !important;
-                padding: 18px !important;
-                margin-top: 0;
-                font-weight: 600;
-                letter-spacing: 2px !important;
-                text-transform: uppercase !important;
-            }
+            .mc-card-ia.is-result .mc-btn-buy { border-radius: 0 !important; display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 11px !important; padding: 18px !important; margin-bottom: 12px; font-weight: 600; letter-spacing: 2px !important; text-transform: uppercase !important; }
+            .mc-card-ia.is-result .mc-btn-outline { border-radius: 0 !important; display: flex; align-items: center; justify-content: center; font-size: 11px !important; padding: 18px !important; margin-top: 0; font-weight: 600; letter-spacing: 2px !important; text-transform: uppercase !important; }
             .mc-card-ia.is-result .mc-res-mobile-only { display: none !important; }
             .mc-card-ia.is-result .mc-close-ia { top: 16px; right: 16px; color: var(--mc-text); z-index: 10; }
         }
     `;
 
-    // ─── IMAGEM DO BOTÃO (trigger) ─────────────────────────────────────────────
     const stampImageHTML = `<img src="https://cdn.shopify.com/s/files/1/0636/6334/1746/files/logo_provador.png?v=1772494793" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
-
-    // ─── HTML ─────────────────────────────────────────────────────────────────────
 
     const html = `
         <div id="mc-modal-ia">
@@ -518,15 +297,9 @@
                     <div id="mc-header-provador">
                         <h1 style="margin:0 0 16px 0;font-size:20px;font-weight:700;letter-spacing:2px;text-transform:uppercase;">Provador Virtual</h1>
                         <div style="margin:0 0 4px;text-align:center;">
-                            <img
-                                src="${LOGO_URL}"
-                                alt="Mariana Cardoso"
-                                style="height:32px;width:auto;display:inline-block;object-fit:contain;"
-                                onerror="this.style.display='none'"
-                            />
+                            <img src="${LOGO_URL}" alt="Mariana Cardoso" style="height:32px;width:auto;display:inline-block;object-fit:contain;" onerror="this.style.display='none'"/>
                         </div>
                     </div>
-
                     <div id="mc-step-upload">
                         <div class="mc-lead-form">
                             <div class="mc-group">
@@ -563,21 +336,19 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div style="margin:20px 0 0;padding:12px 16px;background:#fff8e1;border-left:3px solid #f59e0b;text-align:left;">
+                        <div style="margin:20px 0 0;padding:12px 16px;background:#fff8e1;border-left:3px solid #f59e0b;">
                             <p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.5px;color:#92400e;line-height:1.6;text-align:center;">
                                 ⚠️ Se você escolheu a foto de costas, envie uma foto sua também de costas, se escolheu a frente, envie de frente.
                             </p>
                         </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
                     </div>
-
                     <div style="display:none;padding:60px 0;text-align:center;" id="mc-loading-box">
                         <div style="font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;animation:mc-pulse-text 1.5s infinite ease-in-out;">Gerando Prova Virtual...</div>
                         <div style="height:1px;background:var(--mc-gray);width:100%;position:relative;overflow:hidden;">
                             <div style="position:absolute;top:0;left:0;height:100%;width:30%;background:var(--mc-primary);animation:mc-slide 1.5s infinite linear;"></div>
                         </div>
                     </div>
-
                     <div id="mc-step-result" style="display:none;flex-direction:column;align-items:center;">
                         <div id="mc-result-img-col" style="width:100%;border:1px solid var(--mc-border);margin-bottom:30px;background:var(--mc-gray);">
                             <img id="mc-final-view-img" style="width:100%;height:auto;display:block;">
@@ -633,6 +404,8 @@
     // ─── INIT ─────────────────────────────────────────────────────────────────────
 
     function init() {
+        LOG.info('Iniciando provador...');
+
         const fontLink = document.createElement('link');
         fontLink.href = 'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap';
         fontLink.rel = 'stylesheet';
@@ -643,15 +416,18 @@
             ph.src = 'https://unpkg.com/@phosphor-icons/web';
             document.head.appendChild(ph);
             window.phosphorIconsLoaded = true;
+            LOG.info('Phosphor Icons carregado');
         }
 
         const styleTag = document.createElement('style');
         styleTag.innerHTML = styles;
         document.head.appendChild(styleTag);
+        LOG.ok('Estilos injetados');
 
         const modalContainer = document.createElement('div');
         modalContainer.innerHTML = html;
         document.body.appendChild(modalContainer);
+        LOG.ok('Modal HTML injetado no DOM');
 
         // ── Botão trigger ──
         const openBtn = document.createElement('button');
@@ -660,27 +436,15 @@
         openBtn.setAttribute('aria-label', 'Abrir Provador Virtual');
         openBtn.innerHTML = stampImageHTML;
 
-        // ─── POSICIONAMENTO DO BOTÃO — ESPECÍFICO PARA TRAY ──────────────────────
-        // Na Tray, as imagens ficam dentro de .image-show
-        // O botão é inserido dentro de .image-show para ficar sobre a galeria
         const trayImgContainers = [
-            '.image-show',            // container principal das imagens na Tray
-            '.box-gallery',           // wrapper da galeria
-            '.product-colum-left',    // coluna esquerda do produto
+            '.image-show',
+            '.box-gallery',
+            '.product-colum-left',
         ];
-
-        // Seletores de fallback (outras plataformas)
         const fallbackContainers = [
-            '.product__media-wrapper',
-            '.product-gallery__media',
-            '.product__media',
-            '.product-image-main',
-            '.product-media-container',
-            '[data-media-id]',
-            '.product__media-item',
-            '.product-gallery',
-            '.product-single__media',
-            '.media-gallery'
+            '.product__media-wrapper', '.product-gallery__media', '.product__media',
+            '.product-image-main', '.product-media-container', '[data-media-id]',
+            '.product__media-item', '.product-gallery', '.product-single__media', '.media-gallery'
         ];
 
         let placed = false;
@@ -690,12 +454,14 @@
                 if (window.getComputedStyle(el).position === 'static') el.style.position = 'relative';
                 el.appendChild(openBtn);
                 placed = true;
+                LOG.ok('Botão posicionado em: "' + sel + '"');
                 break;
             }
         }
         if (!placed) {
             openBtn.style.cssText = 'position:fixed;bottom:30px;right:20px;top:auto;width:60px;height:60px;';
             document.body.appendChild(openBtn);
+            LOG.warn('Nenhum container de imagem encontrado — botão fixado no canto da tela (fallback)');
         }
 
         const modal = document.getElementById('mc-modal-ia');
@@ -710,11 +476,13 @@
         let userPhoto = null;
 
         function openModal() {
+            LOG.info('Modal aberto');
             modal.style.display = 'flex';
             lockBodyScroll();
         }
 
         function closeModal() {
+            LOG.info('Modal fechado');
             modal.style.display = 'none';
             unlockBodyScroll();
         }
@@ -723,23 +491,25 @@
             currentProduct = product;
             document.getElementById('mc-fields-top').style.display = product.category === 'top' ? 'block' : 'none';
             document.getElementById('mc-fields-bottom').style.display = product.category === 'bottom' ? 'block' : 'none';
+            LOG.info('Campos exibidos para categoria: ' + product.category);
         }
 
         openBtn.onclick = () => {
-            // Na Tray: h1.product-name
             const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
+            LOG.info('Botão clicado — produto: "' + prodName + '"');
             applyProduct(detectProduct(prodName));
             openModal();
         };
 
-        closeBtn.onclick = () => closeModal();
-        backBtn.onclick = () => closeModal();
+        closeBtn.onclick = () => { LOG.info('Botão fechar clicado'); closeModal(); };
+        backBtn.onclick = () => { LOG.info('Botão "Voltar ao produto" clicado'); closeModal(); };
 
         modal.addEventListener('click', (e) => {
-            if (e.target === modal) closeModal();
+            if (e.target === modal) { LOG.info('Clique fora do card — fechando modal'); closeModal(); }
         });
 
         retryBtn.onclick = () => {
+            LOG.info('Tentar outra foto — resetando fluxo');
             document.getElementById('mc-step-result').style.display = 'none';
             document.getElementById('mc-step-upload').style.display = 'block';
             document.querySelector('.mc-card-ia').classList.remove('is-result');
@@ -748,7 +518,7 @@
             checkFields();
         };
 
-        triggerUpload.onclick = () => realInput.click();
+        triggerUpload.onclick = () => { LOG.info('Abrindo seletor de arquivo...'); realInput.click(); };
 
         phoneInput.addEventListener('input', function (e) {
             let x = e.target.value.replace(/\D/g, '').match(/(\d{0,2})(\d{0,5})(\d{0,4})/);
@@ -764,7 +534,9 @@
             let measOk = currentProduct.category === 'top'
                 ? !!document.getElementById('mc-h-val').value && !!document.getElementById('mc-w-val').value
                 : !!document.getElementById('mc-cin-val').value && !!document.getElementById('mc-quad-val').value;
-            genBtn.disabled = !(measOk && userPhoto && phoneOk);
+            const allOk = measOk && !!userPhoto && phoneOk;
+            genBtn.disabled = !allOk;
+            LOG.info('Validação campos — phone:' + phoneOk + ' medidas:' + measOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
 
         ['mc-h-val', 'mc-w-val', 'mc-cin-val', 'mc-quad-val'].forEach(id => {
@@ -775,6 +547,7 @@
         realInput.onchange = (e) => {
             userPhoto = e.target.files[0];
             if (userPhoto) {
+                LOG.ok('Foto selecionada: "' + userPhoto.name + '" (' + (userPhoto.size / 1024).toFixed(0) + 'KB, ' + userPhoto.type + ')');
                 const rd = new FileReader();
                 rd.onload = ev => {
                     document.getElementById('mc-pre-img').src = ev.target.result;
@@ -786,7 +559,6 @@
         };
 
         genBtn.onclick = async () => {
-            // ── Imagem do produto na Tray: .image-show .list .item.active img ou .zoom img ──
             const prodImgTag = document.querySelector(
                 '.image-show .box-img.active .zoom img, ' +
                 '.image-show .box-img .zoom img, ' +
@@ -798,9 +570,13 @@
             const prodImg = prodImgTag
                 ? (prodImgTag.dataset.src || prodImgTag.dataset.lazy || prodImgTag.src)
                 : (document.querySelector('meta[property="og:image"]')?.content || '');
-
-            // ── Nome do produto na Tray: h1.product-name ──
             const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
+
+            LOG.group('Enviando para webhook');
+            LOG.info('Produto: ' + prodName);
+            LOG.info('Imagem do produto: ' + (prodImg || '(não encontrada)'));
+            LOG.info('WhatsApp: ' + phoneInput.value);
+            LOG.info('Categoria: ' + currentProduct.category + '  |  Fit: ' + currentProduct.fit);
 
             document.getElementById('mc-step-upload').style.display = 'none';
             document.getElementById('mc-loading-box').style.display = 'block';
@@ -817,23 +593,39 @@
                 if (currentProduct.category === 'top') {
                     fd.append('height', document.getElementById('mc-h-val').value);
                     fd.append('weight', document.getElementById('mc-w-val').value);
+                    LOG.info('Altura: ' + document.getElementById('mc-h-val').value + 'cm  |  Peso: ' + document.getElementById('mc-w-val').value + 'kg');
                 } else {
                     fd.append('cintura', document.getElementById('mc-cin-val').value);
                     fd.append('quadril', document.getElementById('mc-quad-val').value);
+                    LOG.info('Cintura: ' + document.getElementById('mc-cin-val').value + 'cm  |  Quadril: ' + document.getElementById('mc-quad-val').value + 'cm');
                 }
 
                 if (prodImg) {
                     try {
+                        LOG.info('Baixando imagem do produto para anexar...');
                         const b = await fetch(prodImg).then(r => r.blob());
                         fd.append('product_image', b, 'p.png');
-                    } catch (_) { }
+                        LOG.ok('Imagem do produto anexada (' + (b.size / 1024).toFixed(0) + 'KB)');
+                    } catch (imgErr) {
+                        LOG.warn('Não foi possível baixar imagem do produto: ' + imgErr.message);
+                    }
+                } else {
+                    LOG.warn('Imagem do produto não encontrada no DOM — enviando sem ela');
                 }
 
                 calculateFinalSize();
+                LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
+                const t0 = Date.now();
 
                 const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                const elapsed = Date.now() - t0;
+                LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
+
                 if (res.ok) {
                     const blob = await res.blob();
+                    LOG.ok('Imagem gerada com sucesso! (' + (blob.size / 1024).toFixed(0) + 'KB, ' + blob.type + ')');
+                    LOG.end();
+
                     document.getElementById('mc-loading-box').style.display = 'none';
                     document.getElementById('mc-final-view-img').src = URL.createObjectURL(blob);
 
@@ -850,23 +642,28 @@
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
+                    LOG.ok('Resultado exibido — tamanho recomendado: ' + recommendedSize);
 
                 } else {
-                    throw new Error();
+                    LOG.error('Webhook retornou erro: ' + res.status);
+                    LOG.end();
+                    throw new Error('HTTP ' + res.status);
                 }
             } catch (e) {
+                LOG.error('Falha no fluxo de geração: ' + e.message, e);
+                LOG.end();
                 alert('Ocorreu um erro ao processar sua imagem. Tente novamente.');
                 location.reload();
             }
         };
 
-        // ─── ADICIONAR AO CARRINHO — ESPECÍFICO PARA TRAY ────────────────────────
-        // Na Tray o formulário é #form_comprar e o botão é dentro dele
+        // ─── ADICIONAR AO CARRINHO ────────────────────────────────────────────────
 
         document.getElementById('mc-add-to-cart-btn').onclick = () => {
             const size = recommendedSize;
+            LOG.group('Adicionar ao carrinho');
+            LOG.info('Selecionando tamanho: ' + size);
 
-            // Tray usa inputs de variante com data-value ou value
             const swatchSelectors = [
                 `input[type="radio"][data-value="${size}"]`,
                 `input[type="radio"][value="${size}"]`,
@@ -876,7 +673,6 @@
                 `[data-option-value="${size}"]`,
                 `.variant-option input[value="${size}"]`,
                 `.product-form__option input[value="${size}"]`,
-                // Tray-specific
                 `input[type="radio"][title="${size}"]`,
                 `.variacoes input[value="${size}"]`,
                 `.variacao-item input[value="${size}"]`,
@@ -891,11 +687,13 @@
                     el.dispatchEvent(new Event('change', { bubbles: true }));
                     el.dispatchEvent(new Event('input', { bubbles: true }));
                     selected = true;
+                    LOG.ok('Tamanho selecionado via seletor: "' + sel + '"');
                     break;
                 }
             }
 
             if (!selected) {
+                LOG.info('Seletores de botão/radio não funcionaram, tentando <select>...');
                 const selects = document.querySelectorAll('select');
                 for (const sel of selects) {
                     const opt = [...sel.options].find(o =>
@@ -906,51 +704,61 @@
                         sel.value = opt.value;
                         sel.dispatchEvent(new Event('change', { bubbles: true }));
                         selected = true;
+                        LOG.ok('Tamanho selecionado via <select>');
                         break;
                     }
                 }
             }
 
+            if (!selected) {
+                LOG.warn('Não foi possível selecionar automaticamente o tamanho "' + size + '" — verifique os seletores da loja');
+            }
+
             function tryAddToCart() {
                 const addBtnSelectors = [
-                    // Tray-specific
                     '#form_comprar button[type="submit"]',
                     '#form_comprar .btn-comprar',
                     '#form_comprar .buy-button',
-                    '.buy-button',
-                    '.btn-comprar',
-                    // Genéricos
-                    'button[name="add"]',
-                    'button.product-form__submit',
-                    '.btn-add-to-cart',
-                    '[data-action="add-to-cart"]',
+                    '.buy-button', '.btn-comprar',
+                    'button[name="add"]', 'button.product-form__submit',
+                    '.btn-add-to-cart', '[data-action="add-to-cart"]',
                     'button[data-btn-addtocart]',
                     '.product-form button[type="submit"]',
                     'form[action*="/cart/add"] button[type="submit"]',
-                    '#AddToCart',
-                    '#add-to-cart',
-                    '.add-to-cart',
-                    '[id*="add-to-cart"]',
-                    '[class*="add-to-cart"]',
-                    '[class*="addtocart"]',
+                    '#AddToCart', '#add-to-cart', '.add-to-cart',
+                    '[id*="add-to-cart"]', '[class*="add-to-cart"]', '[class*="addtocart"]',
                 ];
                 for (const sel of addBtnSelectors) {
                     const btn = document.querySelector(sel);
-                    if (btn && !btn.disabled) { btn.click(); return true; }
+                    if (btn && !btn.disabled) {
+                        btn.click();
+                        LOG.ok('Botão de compra clicado: "' + sel + '"');
+                        return true;
+                    }
                 }
+                LOG.warn('Nenhum botão de compra encontrado/habilitado');
                 return false;
             }
 
             setTimeout(() => {
                 const ok = tryAddToCart();
-                if (!ok) setTimeout(() => tryAddToCart(), 400);
+                if (!ok) {
+                    LOG.info('Tentando novamente em 400ms...');
+                    setTimeout(() => {
+                        const ok2 = tryAddToCart();
+                        if (!ok2) LOG.error('Falha ao adicionar ao carrinho após 2 tentativas');
+                    }, 400);
+                }
+                LOG.end();
                 closeModal();
             }, selected ? 300 : 0);
         };
+
+        LOG.ok('Provador inicializado com sucesso!');
     }
 
-    // ─── EXECUTA EM PÁGINAS DE PRODUTO ───────────────────────────────────────────
-    // Na Tray as páginas de produto ficam em /produto/ ou /p/ (além de /products/ do Shopify)
+    // ─── DETECÇÃO DE PÁGINA DE PRODUTO ───────────────────────────────────────────
+
     const path = window.location.pathname;
     const isProductPage =
         path.includes('/produto/') ||
@@ -959,9 +767,17 @@
         document.getElementById('product-container') !== null ||
         document.getElementById('form_comprar') !== null;
 
+    LOG.info('Página atual: "' + path + '"  →  é página de produto: ' + isProductPage);
+
     if (isProductPage) {
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
-        else init();
+        if (document.readyState === 'loading') {
+            LOG.info('DOM ainda carregando — aguardando DOMContentLoaded...');
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
+    } else {
+        LOG.warn('Página não é de produto — script não inicializado');
     }
 
 })();
