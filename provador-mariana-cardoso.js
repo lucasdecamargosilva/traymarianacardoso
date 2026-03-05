@@ -444,39 +444,49 @@
         for (const sel of [...trayImgContainers, ...fallbackContainers]) {
             const el = document.querySelector(sel);
             if (el) {
-                // Adicionar ao body com posição absoluta calculada
-                document.body.appendChild(openBtn);
-                openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));';
+                const isMobile = window.innerWidth < 768;
 
-                function positionBtn() {
-                    const rect = el.getBoundingClientRect();
-                    const btnTop = rect.top + 25;
-                    // Oculta se o botão ficaria acima do menu (header ~130px) ou fora da tela
-                    if (btnTop < 5 || rect.bottom < 0) {
-                        openBtn.style.visibility = 'hidden';
-                    } else {
-                        openBtn.style.visibility = 'visible';
-                        openBtn.style.top = btnTop + 'px';
-                        openBtn.style.left = (rect.right - 180) + 'px';
+                if (isMobile) {
+                    // ── Mobile: position:absolute direto no container (topo direito) ──
+                    if (window.getComputedStyle(el).position === 'static') el.style.position = 'relative';
+                    el.style.overflow = 'visible';
+                    openBtn.style.cssText = 'position:absolute;top:15px;right:15px;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));';
+                    el.appendChild(openBtn);
+                    LOG.ok('Botão posicionado (mobile) em: "' + sel + '"');
+                } else {
+                    // ── Desktop: position:fixed calculado em tempo real ──
+                    document.body.appendChild(openBtn);
+                    openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));';
+
+                    function positionBtn() {
+                        const rect = el.getBoundingClientRect();
+                        const btnTop = rect.top + 25;
+                        if (btnTop < 120 || rect.bottom < 0) {
+                            openBtn.style.visibility = 'hidden';
+                        } else {
+                            openBtn.style.visibility = 'visible';
+                            openBtn.style.top = btnTop + 'px';
+                            openBtn.style.left = (rect.right - 180) + 'px';
+                        }
                     }
-                }
-                positionBtn();
-                window.addEventListener('scroll', positionBtn);
-                window.addEventListener('resize', positionBtn);
+                    positionBtn();
+                    window.addEventListener('scroll', positionBtn);
+                    window.addEventListener('resize', positionBtn);
 
-                // Hover effect
-                openBtn.addEventListener('mouseenter', () => {
-                    openBtn.style.transform = 'scale(1.08)';
-                    openBtn.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.32))';
-                    openBtn.style.transition = 'transform 0.2s ease, filter 0.2s ease';
-                });
-                openBtn.addEventListener('mouseleave', () => {
-                    openBtn.style.transform = 'scale(1)';
-                    openBtn.style.filter = 'drop-shadow(0 2px 6px rgba(0,0,0,0.18))';
-                });
+                    // Hover effect (desktop)
+                    openBtn.addEventListener('mouseenter', () => {
+                        openBtn.style.transform = 'scale(1.08)';
+                        openBtn.style.filter = 'drop-shadow(0 4px 12px rgba(0,0,0,0.32))';
+                        openBtn.style.transition = 'transform 0.2s ease, filter 0.2s ease';
+                    });
+                    openBtn.addEventListener('mouseleave', () => {
+                        openBtn.style.transform = 'scale(1)';
+                        openBtn.style.filter = 'drop-shadow(0 2px 6px rgba(0,0,0,0.18))';
+                    });
+                    LOG.ok('Botão posicionado (desktop) sobre: "' + sel + '"');
+                }
 
                 placed = true;
-                LOG.ok('Botão posicionado sobre: "' + sel + '" (posição calculada)');
                 break;
             }
         }
