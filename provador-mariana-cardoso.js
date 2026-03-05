@@ -761,6 +761,7 @@
 
     const path = window.location.pathname;
     const isProductPage =
+        window.__MC_FORCE_INIT__ === true ||
         path.includes('/produto/') ||
         path.includes('/p/') ||
         path.includes('/products/') ||
