@@ -369,10 +369,7 @@
                                     <span class="mc-metric-unit" id="mc-unit-2">kg</span>
                                 </div>
                             </div>
-                            <div class="mc-res-mobile-only" style="border-top:1px solid var(--mc-border);border-bottom:1px solid var(--mc-border);padding:20px 0;width:100%;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;">
-                                <span style="font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--mc-text-light);">Tamanho Ideal</span>
-                                <div id="mc-res-letter" style="font-size:24px;font-weight:400;font-family:monospace;line-height:1;">M</div>
-                            </div>
+                            <!-- RECOMENDAÇÃO DE TAMANHO REMOVIDA TEMPORARIAMENTE -->
                             <div class="mc-res-note" style="display:none;">
                                 <i class="ph ph-info"></i>
                                 <span>A simula&#231;&#227;o AI considera o caimento do tecido baseado na sua estrutura corporal informada.</span>
