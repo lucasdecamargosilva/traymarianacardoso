@@ -212,13 +212,24 @@
             display: block; font-size: 9px; font-weight: 600;
             letter-spacing: 1.5px; color: var(--mc-text); margin-bottom: 8px; text-transform: uppercase;
         }
-        .mc-input {
-            width: 100%; padding: 15px; border: 1px solid var(--mc-border);
-            font-size: 13px; font-family: 'Inter', sans-serif;
-            background: transparent; color: var(--mc-text); outline: none; box-sizing: border-box;
-            border-radius: 0; -webkit-appearance: none; appearance: none;
+        .mc-lead-form .mc-input {
+            width: 100% !important; 
+            height: 50px !important;
+            padding: 0 15px !important; 
+            border: 1px solid var(--mc-border) !important;
+            font-size: 13px !important; 
+            font-family: 'Inter', sans-serif !important;
+            background: #ffffff !important; 
+            color: var(--mc-text) !important; 
+            outline: none !important; 
+            box-sizing: border-box !important;
+            border-radius: 0 !important; 
+            -webkit-appearance: none !important; 
+            appearance: none !important;
+            margin: 0 !important;
+            box-shadow: none !important;
         }
-        .mc-input:focus { border-width: 2px; padding: 14px; }
+        .mc-lead-form .mc-input:focus { border-width: 2px !important; border-color: var(--mc-text) !important; }
         .mc-input-hint { font-size: 9px; color: var(--mc-text-light); letter-spacing: 0.5px; margin-top: 6px; }
         .mc-btn-black {
             background: var(--mc-primary); color: var(--mc-bg);
