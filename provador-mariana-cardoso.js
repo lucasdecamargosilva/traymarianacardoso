@@ -450,8 +450,15 @@
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
-                    openBtn.style.top = (rect.top + 25) + 'px';
-                    openBtn.style.left = (rect.right - 180) + 'px';
+                    const btnTop = rect.top + 25;
+                    // Oculta se o botão ficaria acima do menu (header ~130px) ou fora da tela
+                    if (btnTop < 5 || rect.bottom < 0) {
+                        openBtn.style.visibility = 'hidden';
+                    } else {
+                        openBtn.style.visibility = 'visible';
+                        openBtn.style.top = btnTop + 'px';
+                        openBtn.style.left = (rect.right - 180) + 'px';
+                    }
                 }
                 positionBtn();
                 window.addEventListener('scroll', positionBtn);
