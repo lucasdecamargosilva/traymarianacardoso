@@ -452,7 +452,7 @@
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
-                    const btnTop = rect.top + 15;
+                    const btnTop = rect.top + (isMobile ? 70 : 15);
                     // Mobile: header transparente — sem threshold, só some quando imagem sair da tela
                     // Desktop: threshold 120px para não sobrepor o menu fixo
                     const shouldHide = isMobile
@@ -462,7 +462,9 @@
                         openBtn.style.visibility = 'hidden';
                     } else {
                         openBtn.style.visibility = 'visible';
-                        openBtn.style.top = btnTop + 'px';
+                        // Mobile: clamp para nunca sobrepor a barra de avisos (fundo_info ~45px + header ~15px)
+                        const finalTop = isMobile ? Math.max(btnTop, 60) : btnTop;
+                        openBtn.style.top = finalTop + 'px';
                         openBtn.style.left = (rect.right - (isMobile ? 80 : 180)) + 'px';
                     }
                 }
