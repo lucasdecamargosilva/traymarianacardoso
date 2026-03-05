@@ -287,7 +287,19 @@
         }
     `;
 
-    const stampImageHTML = `<img src="https://cdn.shopify.com/s/files/1/0636/6334/1746/files/logo_provador.png?v=1772494793" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
+    const stampImageHTML = `
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 80 80" width="80" height="80">
+            <circle cx="40" cy="40" r="40" fill="#000000"/>
+            <g transform="translate(40,40)">
+                <!-- Ícone câmera -->
+                <path d="M-13,-6 L-9,-12 L9,-12 L13,-6 L16,-6 A2,2 0 0,1 18,-4 L18,10 A2,2 0 0,1 16,12 L-16,12 A2,2 0 0,1 -18,10 L-18,-4 A2,2 0 0,1 -16,-6 Z" fill="none" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="0" cy="2" r="5" fill="none" stroke="#fff" stroke-width="1.5"/>
+                <circle cx="11" cy="-4" r="1.2" fill="#fff"/>
+            </g>
+            <!-- Texto PROVAR -->
+            <text x="40" y="66" text-anchor="middle" fill="#ffffff" font-family="Arial,sans-serif" font-size="8" font-weight="700" letter-spacing="1">PROVAR</text>
+        </svg>
+    `;
 
     const html = `
         <div id="mc-modal-ia">
