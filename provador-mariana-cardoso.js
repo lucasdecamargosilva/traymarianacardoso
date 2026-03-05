@@ -759,26 +759,32 @@
 
     // ─── DETECÇÃO DE PÁGINA DE PRODUTO ───────────────────────────────────────────
 
-    const path = window.location.pathname;
-    const isProductPage =
-        window.__MC_FORCE_INIT__ === true ||
-        path.includes('/produto/') ||
-        path.includes('/p/') ||
-        path.includes('/products/') ||
-        document.getElementById('product-container') !== null ||
-        document.getElementById('form_comprar') !== null;
+    // ── Detecção sempre dentro do DOMContentLoaded para garantir que
+    // os elementos existam no DOM (script pode ser carregado async)
+    function runWhenReady() {
+        const path = window.location.pathname;
+        const isProductPage =
+            window.__MC_FORCE_INIT__ === true ||
+            path.includes('/produto/') ||
+            path.includes('/p/') ||
+            path.includes('/products/') ||
+            document.getElementById('product-container') !== null ||
+            document.getElementById('form_comprar') !== null;
 
-    LOG.info('Página atual: "' + path + '"  →  é página de produto: ' + isProductPage);
+        LOG.info('Página atual: "' + path + '"  →  é página de produto: ' + isProductPage);
 
-    if (isProductPage) {
-        if (document.readyState === 'loading') {
-            LOG.info('DOM ainda carregando — aguardando DOMContentLoaded...');
-            document.addEventListener('DOMContentLoaded', init);
-        } else {
+        if (isProductPage) {
             init();
+        } else {
+            LOG.warn('Página não é de produto — script não inicializado');
         }
+    }
+
+    if (document.readyState === 'loading') {
+        LOG.info('DOM ainda carregando — aguardando DOMContentLoaded...');
+        document.addEventListener('DOMContentLoaded', runWhenReady);
     } else {
-        LOG.warn('Página não é de produto — script não inicializado');
+        runWhenReady();
     }
 
 })();
