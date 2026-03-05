@@ -445,11 +445,12 @@
             const el = document.querySelector(sel);
             if (el) {
                 const isMobile = window.innerWidth < 768;
+                const btnSize = isMobile ? '80px' : '60px';
 
                 // Ambos usam position:fixed para evitar overflow:hidden dos containers
                 document.body.appendChild(openBtn);
                 // Mobile z-index igual ao desktop — evitamos overlap por threshold de posição
-                openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;';
+                openBtn.style.cssText = `position:fixed;z-index:50;width:${btnSize};height:${btnSize};display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;`;
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
@@ -462,7 +463,7 @@
                     } else {
                         openBtn.style.visibility = 'visible';
                         openBtn.style.top = btnTop + 'px';
-                        openBtn.style.left = (rect.right - (isMobile ? 80 : 180)) + 'px';
+                        openBtn.style.left = (rect.right - (isMobile ? 100 : 180)) + 'px';
                     }
                 }
                 positionBtn();
