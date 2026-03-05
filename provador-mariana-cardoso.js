@@ -216,6 +216,7 @@
             width: 100%; padding: 15px; border: 1px solid var(--mc-border);
             font-size: 13px; font-family: 'Inter', sans-serif;
             background: transparent; color: var(--mc-text); outline: none; box-sizing: border-box;
+            border-radius: 0; -webkit-appearance: none; appearance: none;
         }
         .mc-input:focus { border-width: 2px; padding: 14px; }
         .mc-input-hint { font-size: 9px; color: var(--mc-text-light); letter-spacing: 0.5px; margin-top: 6px; }
