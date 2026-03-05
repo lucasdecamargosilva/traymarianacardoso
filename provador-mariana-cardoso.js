@@ -456,7 +456,7 @@
                     const btnTop = rect.top + (isMobile ? 70 : 15);
                     // Mobile: esconde quando o botão entraria na área do header fixo (~56px)
                     // Desktop: esconde quando entraria no menu fixo (~120px)
-                    const threshold = isMobile ? 56 : 120;
+                    const threshold = isMobile ? 80 : 120;
                     if (btnTop < threshold || rect.bottom < 0) {
                         openBtn.style.visibility = 'hidden';
                     } else {
