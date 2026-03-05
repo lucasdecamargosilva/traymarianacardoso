@@ -212,15 +212,17 @@
             display: block; font-size: 9px; font-weight: 600;
             letter-spacing: 1.5px; color: var(--mc-text); margin-bottom: 8px; text-transform: uppercase;
         }
-        .mc-lead-form .mc-input {
+        .mc-lead-form .mc-input,
+        .mc-lead-form input[type="text"].mc-input,
+        .mc-lead-form input[type="tel"].mc-input {
             width: 100% !important; 
             height: 50px !important;
             padding: 0 15px !important; 
-            border: 1px solid var(--mc-border) !important;
+            border: 1px solid #1b1b1b !important; /* Cor de borda fixa para evitar variação */
             font-size: 13px !important; 
-            font-family: 'Inter', sans-serif !important;
+            font-family: inherit !important;
             background: #ffffff !important; 
-            color: var(--mc-text) !important; 
+            color: #1b1b1b !important; 
             outline: none !important; 
             box-sizing: border-box !important;
             border-radius: 0 !important; 
@@ -228,8 +230,14 @@
             appearance: none !important;
             margin: 0 !important;
             box-shadow: none !important;
+            -webkit-box-shadow: none !important;
         }
-        .mc-lead-form .mc-input:focus { border-width: 2px !important; border-color: var(--mc-text) !important; }
+        .mc-lead-form .mc-input:focus,
+        .mc-lead-form input[type="text"]:focus,
+        .mc-lead-form input[type="tel"]:focus { 
+            border-width: 2px !important; 
+            border-color: #1b1b1b !important; 
+        }
         .mc-input-hint { font-size: 9px; color: var(--mc-text-light); letter-spacing: 0.5px; margin-top: 6px; }
         .mc-btn-black {
             background: var(--mc-primary); color: var(--mc-bg);
