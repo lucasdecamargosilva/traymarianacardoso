@@ -453,16 +453,17 @@
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
                     const btnTop = rect.top + 15;
-                    // Mobile: threshold baixo (50px) só para quando a imagem sair da tela
-                    // Desktop: threshold (120px) para não sobreposição com menu
-                    const threshold = isMobile ? 50 : 120;
-                    const offsetRight = isMobile ? 80 : 180;
-                    if (btnTop < threshold || rect.bottom < 0) {
+                    // Mobile: header transparente — sem threshold, só some quando imagem sair da tela
+                    // Desktop: threshold 120px para não sobrepor o menu fixo
+                    const shouldHide = isMobile
+                        ? rect.bottom < 0
+                        : (btnTop < 120 || rect.bottom < 0);
+                    if (shouldHide) {
                         openBtn.style.visibility = 'hidden';
                     } else {
                         openBtn.style.visibility = 'visible';
                         openBtn.style.top = btnTop + 'px';
-                        openBtn.style.left = (rect.right - offsetRight) + 'px';
+                        openBtn.style.left = (rect.right - (isMobile ? 80 : 180)) + 'px';
                     }
                 }
                 positionBtn();
