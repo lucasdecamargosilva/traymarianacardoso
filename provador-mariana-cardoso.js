@@ -96,7 +96,7 @@
         LOG.info('Largura alvo (meia-tórax + folga): ' + larguraAlvo.toFixed(1) + 'cm');
         LOG.ok('Tamanho recomendado: ' + recommendedSize);
         LOG.end();
-        document.getElementById('mc-res-letter').innerText = recommendedSize;
+        // if (document.getElementById('mc-res-letter')) document.getElementById('mc-res-letter').innerText = recommendedSize;
     }
 
     function calcBottom(fit) {
@@ -115,7 +115,7 @@
         LOG.info('Índice cintura: ' + idxC + '  |  Índice quadril: ' + idxQ + '  →  usado: ' + Math.max(idxC, idxQ));
         LOG.ok('Tamanho recomendado: ' + recommendedSize);
         LOG.end();
-        document.getElementById('mc-res-letter').innerText = recommendedSize;
+        // if (document.getElementById('mc-res-letter')) document.getElementById('mc-res-letter').innerText = recommendedSize;
     }
 
     function calculateFinalSize() {
