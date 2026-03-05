@@ -287,7 +287,7 @@
         }
     `;
 
-    const stampImageHTML = `<img src="https://i.ibb.co/VWLtxKq3/Untitled-3.png" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
+    const stampImageHTML = `<img src="https://cdn.shopify.com/s/files/1/0636/6334/1746/files/logo_provador.png?v=1772494793" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
 
     const html = `
         <div id="mc-modal-ia">
