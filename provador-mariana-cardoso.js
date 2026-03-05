@@ -448,18 +448,16 @@
 
                 // Ambos usam position:fixed para evitar overflow:hidden dos containers
                 document.body.appendChild(openBtn);
-                // Mobile: z-index baixo para que o header (z-index maior) passe por cima ao scrollar
-                openBtn.style.cssText = 'position:fixed;z-index:' + (isMobile ? '20' : '50') + ';width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;';
+                // Mobile z-index igual ao desktop — evitamos overlap por threshold de posição
+                openBtn.style.cssText = 'position:fixed;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;filter:drop-shadow(0 2px 6px rgba(0,0,0,0.18));transition:transform 0.2s ease,filter 0.2s ease;';
 
                 function positionBtn() {
                     const rect = el.getBoundingClientRect();
                     const btnTop = rect.top + (isMobile ? 70 : 15);
-                    // Mobile: header transparente — sem threshold, só some quando imagem sair da tela
-                    // Desktop: threshold 120px para não sobrepor o menu fixo
-                    const shouldHide = isMobile
-                        ? rect.bottom < 0
-                        : (btnTop < 120 || rect.bottom < 0);
-                    if (shouldHide) {
+                    // Mobile: esconde quando o botão entraria na área do header fixo (~56px)
+                    // Desktop: esconde quando entraria no menu fixo (~120px)
+                    const threshold = isMobile ? 56 : 120;
+                    if (btnTop < threshold || rect.bottom < 0) {
                         openBtn.style.visibility = 'hidden';
                     } else {
                         openBtn.style.visibility = 'visible';
