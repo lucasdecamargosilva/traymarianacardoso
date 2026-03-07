@@ -11,6 +11,12 @@
         end: function () { console.groupEnd(); },
     };
 
+    // ===============================================
+    // 0. CHUMBAR A API KEY AQUI DIRETO NO CÓDIGO
+    // ===============================================
+    const apiKey = "pl_live_COLOQUE_A_CHAVE_AQUI";
+    window.PROVOU_LEVOU_API_KEY = apiKey;
+
     const WEBHOOK_PROVA = 'https://n8n.segredosdodrop.com/webhook/quantic-materialize';
     const LOGO_URL = 'https://images.tcdn.com.br/files/1173244/themes/75/img/settings/logo-new.svg';
 
@@ -607,6 +613,13 @@
         };
 
         genBtn.onclick = async () => {
+            // 🚨 VALIDAÇÃO BÁSICA NO FRONT 🚨
+            const keyToUse = window.PROVOU_LEVOU_API_KEY;
+            if (!keyToUse || keyToUse.includes("COLOQUE_A_CHAVE_AQUI")) {
+                alert("Erro: API Key não configurada neste script.");
+                return;
+            }
+
             const prodImgTag = document.querySelector(
                 '.image-show .box-img.active .zoom img, ' +
                 '.image-show .box-img .zoom img, ' +
@@ -637,6 +650,9 @@
                 fd.append('product_name', prodName);
                 fd.append('product_type', currentProduct.category);
                 fd.append('product_fit', currentProduct.fit);
+
+                // 👉 INJETA A CHAVE NO FORM DATA PRO N8N LER
+                fd.append('api_key', keyToUse);
 
                 if (currentProduct.category === 'top') {
                     fd.append('height', document.getElementById('mc-h-val').value);
@@ -708,6 +724,12 @@
                     document.getElementById('mc-step-result').style.display = 'flex';
                     LOG.ok('Resultado exibido — tamanho recomendado: ' + recommendedSize);
 
+                } else if (res.status === 401 || res.status === 403) {
+                    LOG.error('Webhook retornou erro de permissão: ' + res.status);
+                    LOG.end();
+                    document.getElementById('mc-loading-box').style.display = 'none';
+                    document.getElementById('mc-step-upload').style.display = 'block';
+                    alert("Provas virtuais indisponíveis nesta loja no momento. (Assinatura Inativa/Chave Inválida)");
                 } else {
                     LOG.error('Webhook retornou erro: ' + res.status);
                     LOG.end();
@@ -716,8 +738,9 @@
             } catch (e) {
                 LOG.error('Falha no fluxo de geração: ' + e.message, e);
                 LOG.end();
-                alert('Ocorreu um erro ao processar sua imagem. Tente novamente.');
-                location.reload();
+                document.getElementById('mc-loading-box').style.display = 'none';
+                document.getElementById('mc-step-upload').style.display = 'block';
+                alert('Ocorreu um erro ao processar sua imagem (ou chave/servidor indisponíveis). Tente novamente.');
             }
         };
 
