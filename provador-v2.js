@@ -419,10 +419,10 @@
                         </div>
                     </div>
                 </div>
-                <div class="mc-powered-footer">
+                <a href="https://provoulevou.com.br" target="_blank" class="mc-powered-footer" style="text-decoration:none;">
                     <span style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);">Powered by</span>
-                    <img src="https://i.ibb.co/jP66Xwqt/logo-provou-levou-sem-fundo.png" class="mc-quantic-logo" alt="Provou Levou">
-                </div>
+                    <img src="https://provoulevou.com.br/assets/provoulevou-logo.png" class="mc-quantic-logo" alt="Provou Levou">
+                </a>
             </div>
         </div>
     `;
