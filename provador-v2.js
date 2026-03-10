@@ -393,27 +393,10 @@
                         <div id="mc-result-actions-col" style="width:100%;">
                             <span class="mc-res-title" style="display:none;">Provador Virtual</span>
                             <span class="mc-res-subtitle" style="display:none;">SIMULA&#199;&#195;O BASEADA NO SEU PERFIL CORPORAL</span>
-                            <div class="mc-metrics-row" style="display:none;">
-                                <div class="mc-metric-card">
-                                    <span class="mc-metric-label" id="mc-label-1">Altura</span>
-                                    <span class="mc-metric-value" id="mc-res-height">&mdash;</span>
-                                    <span class="mc-metric-unit" id="mc-unit-1">m</span>
-                                </div>
-                                <div class="mc-metric-card">
-                                    <span class="mc-metric-label" id="mc-label-2">Peso</span>
-                                    <span class="mc-metric-value" id="mc-res-weight">&mdash;</span>
-                                    <span class="mc-metric-unit" id="mc-unit-2">kg</span>
-                                </div>
-                            </div>
-                            <!-- RECOMENDAÇÃO DE TAMANHO REMOVIDA TEMPORARIAMENTE -->
                             <div class="mc-res-note" style="display:none;">
                                 <i class="ph ph-info"></i>
                                 <span>A simula&#231;&#227;o AI considera o caimento do tecido baseado na sua estrutura corporal informada.</span>
                             </div>
-                            <button class="mc-btn-buy" id="mc-add-to-cart-btn">
-                                <i class="ph ph-shopping-cart"></i>
-                                Adicionar ao Carrinho
-                            </button>
                             <button class="mc-btn-outline" id="mc-btn-back">Voltar ao Produto</button>
                             <p class="mc-res-mobile-only" style="margin-top:30px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);cursor:pointer;text-decoration:underline;text-underline-offset:4px;" id="mc-retry-btn">Tentar outra foto</p>
                         </div>
@@ -744,102 +727,9 @@
             }
         };
 
-        // ─── ADICIONAR AO CARRINHO ────────────────────────────────────────────────
+        // Funcionalidade de adicionar ao carrinho removida conforme solicitado
 
-        document.getElementById('mc-add-to-cart-btn').onclick = () => {
-            const size = recommendedSize;
-            LOG.group('Adicionar ao carrinho');
-            LOG.info('Selecionando tamanho: ' + size);
 
-            const swatchSelectors = [
-                `input[type="radio"][data-value="${size}"]`,
-                `input[type="radio"][value="${size}"]`,
-                `button[data-value="${size}"]`,
-                `button[value="${size}"]`,
-                `.swatch__input[value="${size}"]`,
-                `[data-option-value="${size}"]`,
-                `.variant-option input[value="${size}"]`,
-                `.product-form__option input[value="${size}"]`,
-                `input[type="radio"][title="${size}"]`,
-                `.variacoes input[value="${size}"]`,
-                `.variacao-item input[value="${size}"]`,
-                `label[data-value="${size}"] input`,
-            ];
-
-            let selected = false;
-            for (const sel of swatchSelectors) {
-                const el = document.querySelector(sel);
-                if (el) {
-                    el.click();
-                    el.dispatchEvent(new Event('change', { bubbles: true }));
-                    el.dispatchEvent(new Event('input', { bubbles: true }));
-                    selected = true;
-                    LOG.ok('Tamanho selecionado via seletor: "' + sel + '"');
-                    break;
-                }
-            }
-
-            if (!selected) {
-                LOG.info('Seletores de botão/radio não funcionaram, tentando <select>...');
-                const selects = document.querySelectorAll('select');
-                for (const sel of selects) {
-                    const opt = [...sel.options].find(o =>
-                        o.value.trim().toUpperCase() === size.toUpperCase() ||
-                        o.text.trim().toUpperCase() === size.toUpperCase()
-                    );
-                    if (opt) {
-                        sel.value = opt.value;
-                        sel.dispatchEvent(new Event('change', { bubbles: true }));
-                        selected = true;
-                        LOG.ok('Tamanho selecionado via <select>');
-                        break;
-                    }
-                }
-            }
-
-            if (!selected) {
-                LOG.warn('Não foi possível selecionar automaticamente o tamanho "' + size + '" — verifique os seletores da loja');
-            }
-
-            function tryAddToCart() {
-                const addBtnSelectors = [
-                    '#form_comprar button[type="submit"]',
-                    '#form_comprar .btn-comprar',
-                    '#form_comprar .buy-button',
-                    '.buy-button', '.btn-comprar',
-                    'button[name="add"]', 'button.product-form__submit',
-                    '.btn-add-to-cart', '[data-action="add-to-cart"]',
-                    'button[data-btn-addtocart]',
-                    '.product-form button[type="submit"]',
-                    'form[action*="/cart/add"] button[type="submit"]',
-                    '#AddToCart', '#add-to-cart', '.add-to-cart',
-                    '[id*="add-to-cart"]', '[class*="add-to-cart"]', '[class*="addtocart"]',
-                ];
-                for (const sel of addBtnSelectors) {
-                    const btn = document.querySelector(sel);
-                    if (btn && !btn.disabled) {
-                        btn.click();
-                        LOG.ok('Botão de compra clicado: "' + sel + '"');
-                        return true;
-                    }
-                }
-                LOG.warn('Nenhum botão de compra encontrado/habilitado');
-                return false;
-            }
-
-            setTimeout(() => {
-                const ok = tryAddToCart();
-                if (!ok) {
-                    LOG.info('Tentando novamente em 400ms...');
-                    setTimeout(() => {
-                        const ok2 = tryAddToCart();
-                        if (!ok2) LOG.error('Falha ao adicionar ao carrinho após 2 tentativas');
-                    }, 400);
-                }
-                LOG.end();
-                closeModal();
-            }, selected ? 300 : 0);
-        };
 
         LOG.ok('Provador inicializado com sucesso!');
     }
