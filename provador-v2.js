@@ -179,7 +179,7 @@
             justify-content: center;
             filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18));
             transition: transform 0.2s ease, filter 0.2s ease;
-            animation: mc-pulse-btn 2.5s infinite ease-in-out;
+            animation: mc-shake 3s infinite;
         }
         .mc-btn-trigger-ia:hover { 
             filter: drop-shadow(0 4px 12px rgba(0,0,0,0.28));
@@ -282,10 +282,14 @@
             display: none; font-size: 9px; letter-spacing: 1px; color: #ef4444;
             margin-top: 8px; font-weight: 600; text-align: left; text-transform: uppercase;
         }
-        @keyframes mc-pulse-btn {
-            0% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
-            50% { transform: scale(1.06); filter: drop-shadow(0 4px 10px rgba(0,0,0,0.25)); }
-            100% { transform: scale(1); filter: drop-shadow(0 2px 6px rgba(0,0,0,0.18)); }
+        @keyframes mc-shake {
+            0% { transform: rotate(0deg); }
+            10% { transform: rotate(-10deg); }
+            20% { transform: rotate(10deg); }
+            30% { transform: rotate(-10deg); }
+            40% { transform: rotate(10deg); }
+            50% { transform: rotate(0deg); }
+            100% { transform: rotate(0deg); }
         }
         @keyframes mc-slide { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
         @keyframes mc-pulse-text { 0%, 100% { opacity: 0.4; transform: scale(0.98); } 50% { opacity: 1; transform: scale(1); } }
