@@ -348,6 +348,7 @@
                                 <input type="tel" id="mc-phone" class="mc-input" placeholder="(11) 99999-9999" maxlength="15">
                                 <div id="mc-phone-error" class="mc-status-msg">Insira um n&#250;mero v&#225;lido</div>
                             </div>
+                            <!-- TEMPORARIAMENTE COMENTADO: CAMPOS DE LARGURA E ALTURA
                             <div id="mc-fields-top" style="display:none;">
                                 <div class="mc-input-row">
                                     <div class="mc-group"><label>Altura (cm)</label><input type="text" id="mc-h-val" class="mc-input" placeholder="Ex: 175"></div>
@@ -360,6 +361,7 @@
                                     <div class="mc-group"><label>Quadril (cm)</label><input type="text" id="mc-quad-val" class="mc-input" placeholder="Ex: 100"><p class="mc-input-hint">Parte mais larga do quadril</p></div>
                                 </div>
                             </div>
+                            -->
                         </div>
                         <p style="margin:10px 0 10px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Sua foto deve seguir estes requisitos:</p>
                         <div class="mc-tips-grid" style="margin-top:0;">
@@ -530,9 +532,9 @@
 
         function applyProduct(product) {
             currentProduct = product;
-            document.getElementById('mc-fields-top').style.display = product.category === 'top' ? 'block' : 'none';
-            document.getElementById('mc-fields-bottom').style.display = product.category === 'bottom' ? 'block' : 'none';
-            LOG.info('Campos exibidos para categoria: ' + product.category);
+            // document.getElementById('mc-fields-top').style.display = product.category === 'top' ? 'block' : 'none';
+            // document.getElementById('mc-fields-bottom').style.display = product.category === 'bottom' ? 'block' : 'none';
+            LOG.info('Categoria: ' + product.category + ' (campos de medidas comentados)');
         }
 
         openBtn.onclick = () => {
@@ -572,12 +574,13 @@
             const phoneOk = nums.length >= 10 && nums.length <= 11;
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            let measOk = currentProduct.category === 'top'
-                ? !!document.getElementById('mc-h-val').value && !!document.getElementById('mc-w-val').value
-                : !!document.getElementById('mc-cin-val').value && !!document.getElementById('mc-quad-val').value;
-            const allOk = measOk && !!userPhoto && phoneOk;
+            // Medidas ignoradas por enquanto
+            // let measOk = currentProduct.category === 'top'
+            //     ? !!document.getElementById('mc-h-val').value && !!document.getElementById('mc-w-val').value
+            //     : !!document.getElementById('mc-cin-val').value && !!document.getElementById('mc-quad-val').value;
+            const allOk = !!userPhoto && phoneOk;
             genBtn.disabled = !allOk;
-            LOG.info('Validação campos — phone:' + phoneOk + ' medidas:' + measOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
+            LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
 
         ['mc-h-val', 'mc-w-val', 'mc-cin-val', 'mc-quad-val'].forEach(id => {
@@ -642,13 +645,19 @@
                 fd.append('api_key', keyToUse);
 
                 if (currentProduct.category === 'top') {
-                    fd.append('height', document.getElementById('mc-h-val').value);
-                    fd.append('weight', document.getElementById('mc-w-val').value);
-                    LOG.info('Altura: ' + document.getElementById('mc-h-val').value + 'cm  |  Peso: ' + document.getElementById('mc-w-val').value + 'kg');
+                    // fd.append('height', document.getElementById('mc-h-val').value);
+                    // fd.append('weight', document.getElementById('mc-w-val').value);
+                    fd.append('height', '');
+                    fd.append('weight', '');
+                    LOG.info('Medidas de Top comentadas (enviado vazio)');
                 } else {
-                    fd.append('cintura', document.getElementById('mc-cin-val').value);
-                    fd.append('quadril', document.getElementById('mc-quad-val').value);
-                    LOG.info('Cintura: ' + document.getElementById('mc-cin-val').value + 'cm  |  Quadril: ' + document.getElementById('mc-quad-val').value + 'cm');
+                    // fd.append('cintura', document.getElementById('mc-cin-val').value);
+                    // fd.append('quadril', document.getElementById('mc-quad-val').value);
+                    fd.append('height', '');
+                    fd.append('weight', '');
+                    fd.append('cintura', '');
+                    fd.append('quadril', '');
+                    LOG.info('Medidas de Bottom comentadas (enviado vazio)');
                 }
 
                 if (prodImg) {
