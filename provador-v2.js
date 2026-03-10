@@ -681,6 +681,23 @@
                 const elapsed = Date.now() - t0;
                 LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
 
+                const contentType = res.headers.get("content-type") || "";
+                if (contentType.includes("application/json")) {
+                    const data = await res.json();
+                    if (data.error) {
+                        LOG.error('Erro da API retornado via JSON:', data.error);
+                        LOG.end();
+                        document.getElementById('mc-loading-box').style.display = 'none';
+                        document.getElementById('mc-step-upload').style.display = 'block';
+                        if (data.error === "Chave invalida, vencida ou inativa." || data.error.includes("vencida ou inativa")) {
+                            alert("App desativado nesta loja");
+                        } else {
+                            alert(data.error);
+                        }
+                        return;
+                    }
+                }
+
                 if (res.ok) {
                     const blob = await res.blob();
                     LOG.ok('Imagem gerada com sucesso! (' + (blob.size / 1024).toFixed(0) + 'KB, ' + blob.type + ')');
@@ -689,32 +706,8 @@
                     document.getElementById('mc-loading-box').style.display = 'none';
                     document.getElementById('mc-final-view-img').src = URL.createObjectURL(blob);
 
-                    const resH = document.getElementById('mc-res-height');
-                    const resW = document.getElementById('mc-res-weight');
-                    const label1 = document.getElementById('mc-label-1');
-                    const label2 = document.getElementById('mc-label-2');
-                    const unit1 = document.getElementById('mc-unit-1');
-                    const unit2 = document.getElementById('mc-unit-2');
-
-                    if (currentProduct.category === 'bottom') {
-                        const cVal = document.getElementById('mc-cin-val').value;
-                        const qVal = document.getElementById('mc-quad-val').value;
-                        if (label1) label1.textContent = 'Cintura';
-                        if (label2) label2.textContent = 'Quadril';
-                        if (unit1) unit1.textContent = 'cm';
-                        if (unit2) unit2.textContent = 'cm';
-                        if (resH) resH.textContent = cVal || '\u2014';
-                        if (resW) resW.textContent = qVal || '\u2014';
-                    } else {
-                        const hVal = document.getElementById('mc-h-val').value;
-                        const wVal = document.getElementById('mc-w-val').value;
-                        if (label1) label1.textContent = 'Altura';
-                        if (label2) label2.textContent = 'Peso';
-                        if (unit1) unit1.textContent = 'm';
-                        if (unit2) unit2.textContent = 'kg';
-                        if (resH) resH.textContent = hVal ? (parseFloat(hVal) / 100).toFixed(2) : '\u2014';
-                        if (resW) resW.textContent = wVal || '\u2014';
-                    }
+                    // Lógica de exibir medidas na tela foi removida/comentada
+                    // const cVal = document.getElementById('mc-cin-val')?.value;
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
