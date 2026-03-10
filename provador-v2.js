@@ -711,7 +711,7 @@
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
-                    LOG.ok('Resultado exibido — tamanho recomendado: ' + recommendedSize);
+                    LOG.ok('Resultado exibido.');
 
                 } else if (res.status === 401 || res.status === 403) {
                     LOG.error('Webhook retornou erro de permissão: ' + res.status);
@@ -725,11 +725,16 @@
                     throw new Error('HTTP ' + res.status);
                 }
             } catch (e) {
+                console.error('------- ERRO DETALHADO capturado no CATCH -------');
+                console.error('Nome:', e.name);
+                console.error('Mensagem:', e.message);
+                console.error('Stack:', e.stack);
+                console.error('-------------------------------------------------');
                 LOG.error('Falha no fluxo de geração: ' + e.message, e);
                 LOG.end();
                 document.getElementById('mc-loading-box').style.display = 'none';
                 document.getElementById('mc-step-upload').style.display = 'block';
-                alert('Ocorreu um erro ao processar sua imagem (ou chave/servidor indisponíveis). Tente novamente.');
+                alert('Ocorreu um erro ao processar sua imagem (ou chave/servidor indisponíveis). Tente novamente.\n\nDetalhe do erro temporário: ' + e.message);
             }
         };
 
