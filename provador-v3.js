@@ -1,14 +1,12 @@
 (function () {
     // ─── LOG HELPER ───────────────────────────────────────────────────────────────
     const LOG = {
-        prefix: '%c[Provador MC]',
-        style: 'background:#000;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;',
-        info: function (msg, data) { console.log(LOG.prefix + ' ' + msg, LOG.style, ...(data !== undefined ? [data] : [])); },
-        ok: function (msg, data) { console.log('%c[Provador MC] ✓ ' + msg, 'background:#16a34a;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
-        warn: function (msg, data) { console.warn('%c[Provador MC] ⚠ ' + msg, 'background:#d97706;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
-        error: function (msg, data) { console.error('%c[Provador MC] ✗ ' + msg, 'background:#dc2626;color:#fff;padding:2px 6px;border-radius:3px;font-weight:700;font-size:10px;', ...(data !== undefined ? [data] : [])); },
-        group: function (label) { console.groupCollapsed(LOG.prefix + ' ' + label, LOG.style); },
-        end: function () { console.groupEnd(); },
+        info: () => { },
+        ok: () => { },
+        warn: () => { },
+        error: () => { },
+        group: () => { },
+        end: () => { },
     };
 
     // ===============================================
@@ -226,10 +224,10 @@
         .mc-lead-form input[type="text"].mc-input,
         .mc-lead-form input[type="tel"].mc-input {
             width: 100% !important; 
-            height: 50px !important;
-            padding: 0 15px !important; 
+            height: 60px !important;
+            padding: 0 20px !important; 
             border: 1px solid #1b1b1b !important; /* Cor de borda fixa para evitar variação */
-            font-size: 13px !important; 
+            font-size: 16px !important; 
             font-family: inherit !important;
             background: #ffffff !important; 
             color: #1b1b1b !important; 
@@ -276,7 +274,7 @@
             display: flex; align-items: center; justify-content: center; gap: 10px;
             flex-shrink: 0; border-top: 1px solid var(--mc-gray);
         }
-        .mc-quantic-logo { height: 18px; filter: brightness(0); }
+        .mc-quantic-logo { height: 23px; filter: brightness(0); }
         .mc-status-msg {
             display: none; font-size: 9px; letter-spacing: 1px; color: #ef4444;
             margin-top: 8px; font-weight: 600; text-align: left; text-transform: uppercase;
@@ -324,6 +322,34 @@
             .mc-card-ia.is-result .mc-res-mobile-only { display: none !important; }
             .mc-card-ia.is-result .mc-close-ia { top: 16px; right: 16px; color: var(--mc-text); z-index: 10; }
         }
+        #mc-step-confirm {
+            position: absolute;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(2px);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .mc-confirm-box {
+            background: #ffffff;
+            width: 100%;
+            max-width: 380px;
+            padding: 40px 30px;
+            border: 1px solid #000;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            animation: mc-popup-zoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        @keyframes mc-popup-zoom {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
     `;
 
     const stampImageHTML = `<img src="https://i.ibb.co/4wFQF9pb/provador-tag.webp" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
@@ -341,34 +367,23 @@
                         </div>
                     </div>
                     <div id="mc-step-upload">
-                        <div class="mc-lead-form">
+                        <div class="mc-lead-form" style="margin-bottom:0;">
                             <div class="mc-group">
                                 <label>Seu WhatsApp</label>
                                 <input type="tel" id="mc-phone" class="mc-input" placeholder="(11) 99999-9999" maxlength="15">
                                 <div id="mc-phone-error" class="mc-status-msg">Insira um n&#250;mero v&#225;lido</div>
                             </div>
-                            <!-- TEMPORARIAMENTE COMENTADO: CAMPOS DE LARGURA E ALTURA
-                            <div id="mc-fields-top" style="display:none;">
-                                <div class="mc-input-row">
-                                    <div class="mc-group"><label>Altura (cm)</label><input type="text" id="mc-h-val" class="mc-input" placeholder="Ex: 175"></div>
-                                    <div class="mc-group"><label>Peso (kg)</label><input type="text" id="mc-w-val" class="mc-input" placeholder="Ex: 80"></div>
-                                </div>
-                            </div>
-                            <div id="mc-fields-bottom" style="display:none;">
-                                <div class="mc-input-row">
-                                    <div class="mc-group"><label>Cintura (cm)</label><input type="text" id="mc-cin-val" class="mc-input" placeholder="Ex: 84"><p class="mc-input-hint">Meça ao redor do umbigo</p></div>
-                                    <div class="mc-group"><label>Quadril (cm)</label><input type="text" id="mc-quad-val" class="mc-input" placeholder="Ex: 100"><p class="mc-input-hint">Parte mais larga do quadril</p></div>
-                                </div>
-                            </div>
-                            -->
                         </div>
-                        <p style="margin:10px 0 10px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Sua foto deve seguir estes requisitos:</p>
+                        <p style="margin:20px 0 10px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Sua foto deve seguir estes requisitos:</p>
                         <div class="mc-tips-grid" style="margin-top:0;">
                             <div class="mc-tip-item"><i class="ph ph-t-shirt"></i><span>Com Roupa</span></div>
                             <div class="mc-tip-item"><i class="ph ph-person"></i><span>Corpo Inteiro</span></div>
                             <div class="mc-tip-item"><i class="ph ph-sun"></i><span>Boa Luz</span></div>
                         </div>
-                        <div style="display:flex;gap:20px;justify-content:center;margin-top:30px;">
+                        <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;">
+
+
+
                             <div id="mc-trigger-upload" style="width:120px;height:160px;border:1px solid var(--mc-border);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;background:var(--mc-gray);transition:0.3s;">
                                 <i class="ph ph-camera-plus" style="font-size:32px;color:var(--mc-primary);margin-bottom:10px;"></i>
                                 <span style="font-size:9px;font-weight:600;letter-spacing:1px;text-transform:uppercase;">Enviar Foto</span>
@@ -378,13 +393,35 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div style="margin:20px 0 0;padding:12px 16px;background:#fff8e1;border-left:3px solid #f59e0b;">
-                            <p style="margin:0;font-size:10px;font-weight:600;letter-spacing:0.5px;color:#92400e;line-height:1.6;text-align:center;">
-                                &#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas, se escolheu a frente, envie de frente.
-                            </p>
-                        </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
                     </div>
+
+                    <!-- PASSO DE CONFIRMAÇÃO (CENTERED POP-UP) -->
+                    <div id="mc-step-confirm">
+                        <div class="mc-confirm-box">
+                            <h2 style="margin:0 0 30px 0;font-size:16px;font-weight:800;letter-spacing:1px;text-transform:uppercase;color:#000;line-height:1.4;">Sua foto segue estes requisitos?</h2>
+                            
+                            <div class="mc-tips-grid" style="margin-bottom:35px; border-top:none; border-bottom:none; padding:0;">
+                                <div class="mc-tip-item">
+                                    <i class="ph ph-t-shirt" style="font-size:24px;"></i>
+                                    <span style="font-size:8px;">Com Roupa</span>
+                                </div>
+                                <div class="mc-tip-item">
+                                    <i class="ph ph-person" style="font-size:24px;"></i>
+                                    <span style="font-size:8px;">Corpo Inteiro</span>
+                                </div>
+                                <div class="mc-tip-item">
+                                    <i class="ph ph-sun" style="font-size:24px;"></i>
+                                    <span style="font-size:8px;">Boa Luz</span>
+                                </div>
+                            </div>
+
+                            <button class="mc-btn-black" id="mc-btn-confirm-yes" style="margin-top:0; padding: 20px 0;">SIM, GERAR FOTO</button>
+                            <button class="mc-btn-outline" id="mc-btn-confirm-no" style="margin-top:15px; border-color:#ff4d4d; color:#ff4d4d; padding: 18px 0; background:none;">N&Atilde;O, QUERO TROCAR</button>
+                        </div>
+                    </div>
+
+
                     <div style="display:none;padding:60px 0;text-align:center;" id="mc-loading-box">
                         <div style="font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;animation:mc-pulse-text 1.5s infinite ease-in-out;">Gerando Prova Virtual...</div>
                         <div style="height:1px;background:var(--mc-gray);width:100%;position:relative;overflow:hidden;">
@@ -508,6 +545,12 @@
 
         const modal = document.getElementById('mc-modal-ia');
         const genBtn = document.getElementById('mc-btn-generate');
+        const confirmStep = document.getElementById('mc-step-confirm');
+        const confirmBtnYes = document.getElementById('mc-btn-confirm-yes');
+        const confirmBtnNo = document.getElementById('mc-btn-confirm-no');
+        const confirmImg = document.getElementById('mc-confirm-img');
+        const uploadStep = document.getElementById('mc-step-upload');
+
         const closeBtn = document.getElementById('mc-close-btn');
         const backBtn = document.getElementById('mc-btn-back');
         const retryBtn = document.getElementById('mc-retry-btn');
@@ -518,6 +561,7 @@
         let userPhoto = null;
 
         function openModal() {
+
             LOG.info('Modal aberto');
             modal.style.display = 'flex';
             lockBodyScroll();
@@ -531,12 +575,12 @@
 
         function applyProduct(product) {
             currentProduct = product;
-            // document.getElementById('mc-fields-top').style.display = product.category === 'top' ? 'block' : 'none';
-            // document.getElementById('mc-fields-bottom').style.display = product.category === 'bottom' ? 'block' : 'none';
             LOG.info('Categoria: ' + product.category + ' (campos de medidas comentados)');
         }
 
+
         openBtn.onclick = () => {
+
             const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
             LOG.info('Botão clicado — produto: "' + prodName + '"');
             applyProduct(detectProduct(prodName));
@@ -601,7 +645,39 @@
             }
         };
 
-        genBtn.onclick = async () => {
+        genBtn.onclick = () => {
+            LOG.info('Botão "Ver no meu corpo" clicado');
+            if (!userPhoto) {
+                LOG.warn('Tentativa de gerar sem foto selecionada');
+                return;
+            }
+            const rd = new FileReader();
+            rd.onload = ev => {
+                LOG.info('Leitura da foto concluída, exibindo pop-up de confirmação');
+                if (confirmImg) confirmImg.src = ev.target.result;
+                if (confirmStep) confirmStep.style.display = 'flex';
+                // Note: O uploadStep não é escondido aqui para que ele fique ao fundo (escurecido) como na Divine
+            };
+            rd.readAsDataURL(userPhoto);
+        };
+
+
+
+        confirmBtnNo.onclick = () => {
+            LOG.info('Botão "Não, quero trocar" clicado');
+            if (confirmStep) confirmStep.style.display = 'none';
+            if (uploadStep) uploadStep.style.display = 'block';
+        };
+
+
+        confirmBtnYes.onclick = async () => {
+            LOG.info('Botão "Sim, gerar foto" clicado');
+            if (confirmStep) confirmStep.style.display = 'none';
+            if (uploadStep) uploadStep.style.display = 'none';
+            const loadingBox = document.getElementById('mc-loading-box');
+            if (loadingBox) loadingBox.style.display = 'block';
+
+
             // 🚨 VALIDAÇÃO BÁSICA NO FRONT 🚨
             const keyToUse = window.PROVOU_LEVOU_API_KEY;
             if (!keyToUse || keyToUse.includes("COLOQUE_A_CHAVE_AQUI")) {
@@ -621,6 +697,8 @@
                 ? (prodImgTag.dataset.src || prodImgTag.dataset.lazy || prodImgTag.src)
                 : (document.querySelector('meta[property="og:image"]')?.content || '');
             const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
+
+
 
             LOG.group('Enviando para webhook');
             LOG.info('Produto: ' + prodName);
