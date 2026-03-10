@@ -125,9 +125,8 @@
     }
 
     function calculateFinalSize() {
-        LOG.info('Calculando tamanho final...');
-        if (currentProduct.category === 'top') calcTop(currentProduct.fit);
-        else calcBottom(currentProduct.fit);
+        // Feature temporariamente desativada: não faz cálculos de tamanho
+        return;
     }
 
     // ─── LOCK / UNLOCK SCROLL DA PÁGINA ──────────────────────────────────────────
