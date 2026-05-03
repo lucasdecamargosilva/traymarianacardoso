@@ -898,7 +898,17 @@ if (document.querySelector('html.page-product')) {
         .mc-quantic-logo { height: 22px; filter: brightness(0); opacity: 0.5; }
     `;
 
-    const stampImageHTML = `<img src="https://i.ibb.co/4wFQF9pb/provador-tag.webp" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
+
+    function showError() {
+        var lb = document.getElementById('mc-loading-box');
+        var su = document.getElementById('mc-step-upload');
+        var se = document.getElementById('mc-step-error');
+        if (lb) lb.style.display = 'none';
+        if (su) su.style.display = 'none';
+        if (se) se.style.display = 'flex';
+    }
+
+        const stampImageHTML = `<img src="https://i.ibb.co/4wFQF9pb/provador-tag.webp" alt="Provador Virtual" style="width:100%;height:100%;object-fit:contain;">`;
 
 
     const html = `
@@ -1352,7 +1362,7 @@ if (document.querySelector('html.page-product')) {
             // 🚨 VALIDAÇÃO BÁSICA NO FRONT 🚨
             const keyToUse = window.PROVOU_LEVOU_API_KEY;
             if (!keyToUse || keyToUse.includes("COLOQUE_A_CHAVE_AQUI")) {
-                alert("Erro: API Key não configurada neste script.");
+                showError();
                 return;
             }
 
@@ -1446,9 +1456,9 @@ if (document.querySelector('html.page-product')) {
                         document.getElementById('mc-loading-box').style.display = 'none';
                         document.getElementById('mc-step-upload').style.display = 'block';
                         if (data.error === "Chave invalida, vencida ou inativa." || data.error.includes("vencida ou inativa")) {
-                            alert("App desativado nesta loja");
+                            showError();
                         } else {
-                            alert(data.error);
+                            showError();
                         }
                         return;
                     }
@@ -1485,7 +1495,7 @@ if (document.querySelector('html.page-product')) {
                     LOG.end();
                     document.getElementById('mc-loading-box').style.display = 'none';
                     document.getElementById('mc-step-upload').style.display = 'block';
-                    alert("Provas virtuais indisponíveis nesta loja no momento. (Assinatura Inativa/Chave Inválida)");
+                    showError();
                 } else {
                     LOG.error('Webhook retornou erro: ' + res.status);
                     LOG.end();
