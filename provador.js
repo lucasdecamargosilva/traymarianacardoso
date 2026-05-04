@@ -449,7 +449,9 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <p style="margin:12px 0 0;font-size:10px;color:#999;text-align:center;line-height:1.5;">Ao continuar, voc&#234; concorda com os <a href="http://provoulevou.com.br/termos.html" target="_blank" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></p>
+                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';var n=document.getElementById('mc-phone').value.replace(/\D/g,'');document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&n.length>=10&&n.length<=11&&t);})()" style="display:block;margin:12px 0 0;font-size:11px;color:#666;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
+                            <span id="mc-terms-icon" style="font-size:15px;vertical-align:middle;margin-right:5px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
+                        </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
                     </div>
 
@@ -508,7 +510,7 @@
                 </div>
                 <a href="https://provoulevou.com.br" target="_blank" class="mc-powered-footer" style="text-decoration:none;">
                     <span style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);">Powered by</span>
-                    <img src="https://provoulevou.com.br/assets/provoulevou-logo.png" class="mc-quantic-logo" alt="Provou Levou">
+                    <img src="https://i.ibb.co/MD3B4FQf/Logo-provou-preto-1.png" class="mc-quantic-logo" alt="Provou Levou">
                 </a>
             </div>
         </div>
@@ -690,9 +692,9 @@
             const phoneOk = nums.length >= 10 && nums.length <= 11;
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            const allOk = !!userPhoto && phoneOk;
+            const allOk = !!userPhoto && phoneOk && !!window._mcTerms;
             genBtn.disabled = !allOk;
-            LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
+            LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' termos:' + !!window._mcTerms + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
 
         ['mc-h-val', 'mc-w-val', 'mc-cin-val', 'mc-quad-val', 'mc-blusa-h-val', 'mc-blusa-w-val'].forEach(id => {
@@ -703,6 +705,7 @@
 
         realInput.onchange = (e) => {
             userPhoto = e.target.files[0];
+            window._mcPhoto = userPhoto;
             if (userPhoto) {
                 LOG.ok('Foto selecionada: "' + userPhoto.name + '" (' + (userPhoto.size / 1024).toFixed(0) + 'KB, ' + userPhoto.type + ')');
                 const rd = new FileReader();
