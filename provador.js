@@ -343,10 +343,6 @@
         #mc-pre-view { width: 120px; height: 160px; overflow: hidden; border: 1px solid #e8e8e8; border-radius: 4px; }
         #mc-pre-img { width: 100%; height: 100%; object-fit: cover; }
 
-        #mc-terms-row { display: flex !important; align-items: center; justify-content: center; gap: 8px; font-size: 11.5px; color: var(--mc-text-light); cursor: pointer; line-height: 1.5; }
-        #mc-terms-row a { color: var(--mc-gold); text-decoration: underline; }
-        #mc-custom-checkbox { transition: border-color 0.2s; }
-        #mc-accept-terms { position: absolute; opacity: 0; width: 0; height: 0; pointer-events: none; }
 
         .mc-btn-black {
             background: var(--mc-text); color: var(--mc-bg);
@@ -453,13 +449,7 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div id="mc-terms-row" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:16px;cursor:pointer;font-size:12px;line-height:1.4;color:#64748b;text-align:center;width:100%;box-sizing:border-box;">
-                            <div id="mc-custom-checkbox" style="width:16px;height:16px;min-width:16px;flex-shrink:0;border:1.5px solid #555;box-sizing:border-box;display:flex;align-items:center;justify-content:center;cursor:pointer;background:#fff;">
-                                <div id="mc-custom-check" style="display:none;width:9px;height:9px;background:#c9a227;"></div>
-                            </div>
-                            <input type="checkbox" id="mc-accept-terms" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none;margin:0;">
-                            <span>Ao continuar, concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" style="color:var(--mc-gold);text-decoration:underline;" onclick="event.stopPropagation()">Termos e Condi&#231;&#245;es</a></span>
-                        </div>
+                        <p style="margin:12px 0 0;font-size:10px;color:#999;text-align:center;line-height:1.5;">Ao continuar, voc&#234; concorda com os <a href="http://provoulevou.com.br/termos.html" target="_blank" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></p>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
                     </div>
 
@@ -701,7 +691,7 @@
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
             const allOk = !!userPhoto && phoneOk;
-            genBtn.disabled = !(allOk && document.getElementById('mc-accept-terms').checked);
+            genBtn.disabled = !allOk;
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
 
@@ -710,14 +700,6 @@
             if (el) el.addEventListener('input', checkFields);
         });
 
-        document.getElementById('mc-terms-row').addEventListener('click', (e) => {
-            if (e.target.tagName === 'A') return;
-            const cb = document.getElementById('mc-accept-terms');
-            cb.checked = !cb.checked;
-            document.getElementById('mc-custom-check').style.display = cb.checked ? 'block' : 'none';
-            document.getElementById('mc-custom-checkbox').style.borderColor = cb.checked ? '#c9a227' : '#555';
-            checkFields();
-        });
 
         realInput.onchange = (e) => {
             userPhoto = e.target.files[0];
