@@ -803,10 +803,16 @@ if (document.querySelector('html.page-product')) {
         #mc-pre-img { width: 100%; height: 100%; object-fit: cover; }
 
         /* ── Terms ── */
-        .mc-terms-row, label:has(#mc-accept-terms) {
-            display: flex !important; align-items: center; gap: 8px;
+        .mc-terms-row, label:has(#mc-accept-terms), #mc-step-upload > label {
+            display: flex !important; align-items: center !important; gap: 8px !important;
             font-size: 11.5px; color: var(--mc-text-light); cursor: pointer; margin-top: 16px;
             justify-content: center; text-align: center; line-height: 1.4;
+            visibility: visible !important; opacity: 1 !important;
+        }
+        #mc-accept-terms {
+            display: inline-block !important; visibility: visible !important;
+            opacity: 1 !important; width: auto !important; height: auto !important;
+            position: static !important; margin: 0 !important;
         }
 
         /* ── Buttons ── */
