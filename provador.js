@@ -807,9 +807,8 @@ if (document.querySelector('html.page-product')) {
                                 <input type="tel" id="mc-phone" class="mc-input" placeholder="(11) 99999-9999" maxlength="15">
                                 <div id="mc-phone-error" class="mc-status-msg">Insira um n\u00famero v\u00e1lido</div>
                             </div>
-                            <div id="mc-calca-fields" style="display:none;">
-                                <p style="margin:0 0 10px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Suas medidas (para recomenda\u00e7\u00e3o de tamanho)</p>
-                                <p style="margin:0 0 8px;font-size:10px;color:var(--mc-text-light);text-align:center;">Me\u00e7a com fita m\u00e9trica na parte mais larga</p>
+                            <div id="mc-calca-fields">
+                                <p style="margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Suas medidas (recomenda\u00e7\u00e3o de tamanho)</p>
                                 <div style="display:flex;gap:12px;">
                                     <div class="mc-group" style="flex:1;">
                                         <label style="font-size:11px;font-weight:600;margin-bottom:4px;display:block;">Cintura (cm)</label>
@@ -821,8 +820,7 @@ if (document.querySelector('html.page-product')) {
                                     </div>
                                 </div>
                             </div>
-                            <div id="mc-blusa-fields" style="display:none;">
-                                <p style="margin:0 0 10px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Seus dados (para recomenda\u00e7\u00e3o de tamanho)</p>
+                            <div id="mc-blusa-fields">
                                 <div style="display:flex;gap:12px;">
                                     <div class="mc-group" style="flex:1;">
                                         <label style="font-size:11px;font-weight:600;margin-bottom:4px;display:block;">Altura (cm)</label>
@@ -1101,13 +1099,7 @@ if (document.querySelector('html.page-product')) {
             const phoneOk = nums.length >= 10 && nums.length <= 11;
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            let measOk = true;
-            if (marianaType === 'calca') {
-                measOk = !!document.getElementById('mc-cin-val').value && !!document.getElementById('mc-quad-val').value;
-            } else if (marianaType === 'blusa') {
-                measOk = !!document.getElementById('mc-blusa-h-val').value && !!document.getElementById('mc-blusa-w-val').value;
-            }
-            const allOk = !!userPhoto && phoneOk && measOk;
+            const allOk = !!userPhoto && phoneOk;
             genBtn.disabled = !(allOk && document.getElementById('mc-accept-terms').checked);
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
