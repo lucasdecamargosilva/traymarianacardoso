@@ -444,7 +444,7 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';var n=document.getElementById('mc-phone').value.replace(/\D/g,'');document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&n.length>=10&&n.length<=11&&t);})()" style="display:block;margin:12px 0 0;font-size:11px;color:#666;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
+                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t);})()" style="display:block;margin:12px 0 0;font-size:11px;color:#666;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
                             <span id="mc-terms-icon" style="font-size:15px;vertical-align:middle;margin-right:5px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
                         </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
@@ -627,7 +627,7 @@
             const phoneOk = nums.length >= 10 && nums.length <= 11;
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            const allOk = !!userPhoto && phoneOk && !!window._mcTerms;
+            const allOk = !!userPhoto && !!window._mcTerms;
             genBtn.disabled = !allOk;
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' termos:' + !!window._mcTerms + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
