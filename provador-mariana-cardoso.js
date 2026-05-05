@@ -385,6 +385,16 @@
         #mc-rec-size-desc { margin: 4px 0 0; font-size: 10px; color: var(--mc-text-light); line-height: 1.4; }
         .mc-res-mobile-only { margin: 0; }
 
+        /* Related products */
+        #mc-related-products { padding: 0 28px 24px; }
+        #mc-related-products h4 { font-family: var(--font-display); font-size: 13px; letter-spacing: 3px; text-transform: uppercase; color: var(--mc-text-light); margin: 18px 0 12px; font-weight: 400; }
+        .mc-related-grid { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 4px; -webkit-overflow-scrolling: touch; justify-content: flex-start; }
+        .mc-related-grid::-webkit-scrollbar { display: none; }
+        .mc-related-card { flex: 0 0 calc(33% - 7px); min-width: 80px; max-width: 110px; text-decoration: none; color: var(--mc-text); display: flex; flex-direction: column; gap: 5px; }
+        .mc-related-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; border: 1px solid #e8e8e8; display: block; }
+        .mc-related-card-name { font-size: 9.5px; font-weight: 500; line-height: 1.4; color: var(--mc-text); overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+        .mc-related-card-price { font-size: 10px; font-weight: 700; color: var(--mc-gold); }
+
         @media (min-width: 768px) {
             .mc-card-ia.is-result { width: 780px !important; max-width: 90vw !important; max-height: 92vh !important; height: auto !important; }
             .mc-card-ia.is-result #mc-header-provador { display: none !important; }
@@ -507,6 +517,10 @@
                             <button class="mc-btn-black mc-res-mobile-only" id="mc-retry-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
                                 <i class="ph ph-camera"></i> Tentar outra foto
                             </button>
+                            <div id="mc-related-products" style="display:none;">
+                                <h4>Veja tamb&eacute;m</h4>
+                                <div class="mc-related-grid" id="mc-related-grid"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -954,6 +968,7 @@
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
+                    loadRelatedProducts();
                     LOG.ok('Resultado exibido.' + (recSize ? ' Tamanho recomendado: ' + recSize : ''));
 
                 } else if (res.status === 401 || res.status === 403) {
@@ -984,6 +999,79 @@
         // Funcionalidade de adicionar ao carrinho removida conforme solicitado
 
 
+
+
+        function loadRelatedProducts() {
+            var grid = document.getElementById('mc-related-grid');
+            var section = document.getElementById('mc-related-products');
+            if (!grid || !section) return;
+
+            // Seletores Tray + fallbacks comuns
+            var selectors = [
+                '.section-related-products .product-list-item',
+                '.related-products .product-list-item',
+                '.box-product-list .product-list-item',
+                '.product-list-related .product-list-item',
+                '.related-products li',
+                '.box-related-products .product-list-item'
+            ];
+            var items = [];
+            for (var s of selectors) {
+                items = document.querySelectorAll(s);
+                if (items.length) break;
+            }
+            if (!items.length) {
+                LOG.warn('Nenhum produto relacionado encontrado');
+                return;
+            }
+
+            var products = [];
+            items.forEach(function(item) {
+                if (products.length >= 3) return;
+                try {
+                    var imgEl = item.querySelector('img');
+                    var nameEl = item.querySelector('.product-name, .name, h3, .title, [class*="name"]');
+                    var priceEl = item.querySelector('.product-price, .price, [class*="price"]');
+                    var linkEl = item.querySelector('a[href]');
+
+                    var img = imgEl ? (imgEl.getAttribute('data-src') || imgEl.src) : '';
+                    var name = nameEl ? nameEl.textContent.trim() : (imgEl && imgEl.alt ? imgEl.alt.trim() : '');
+                    var price = priceEl ? priceEl.textContent.trim().replace(/\s+/g, ' ') : '';
+                    var link = linkEl ? linkEl.getAttribute('href') : '';
+
+                    if (img && (name || price)) {
+                        products.push({ name: name, img: img, price: price, link: link });
+                    }
+                } catch(e) {}
+            });
+
+            if (!products.length) return;
+            while (grid.firstChild) grid.removeChild(grid.firstChild);
+            products.forEach(function(p) {
+                var a = document.createElement('a');
+                a.className = 'mc-related-card';
+                a.href = p.link || '#';
+                a.target = '_blank';
+                var img = document.createElement('img');
+                img.src = p.img;
+                img.alt = p.name;
+                img.loading = 'lazy';
+                var nameEl = document.createElement('span');
+                nameEl.className = 'mc-related-card-name';
+                nameEl.textContent = p.name;
+                a.appendChild(img);
+                a.appendChild(nameEl);
+                if (p.price) {
+                    var priceEl = document.createElement('span');
+                    priceEl.className = 'mc-related-card-price';
+                    priceEl.textContent = p.price;
+                    a.appendChild(priceEl);
+                }
+                grid.appendChild(a);
+            });
+            section.style.display = 'block';
+            LOG.ok('Related products carregados: ' + products.length);
+        }
 
         LOG.ok('Provador inicializado com sucesso!');
     }
