@@ -744,6 +744,17 @@
                 LOG.warn('Tentativa de gerar sem foto selecionada');
                 return;
             }
+            const _gNums = (phoneInput.value || '').replace(/\D/g, '');
+            const _gPhoneOk = (_gNums.length === 10 || _gNums.length === 11) && /^[1-9][1-9]/.test(_gNums) && (_gNums.length === 10 || _gNums[2] === '9');
+            if (!_gPhoneOk) {
+                LOG.warn('Telefone inválido — não gera');
+                phoneInput.focus();
+                return;
+            }
+            if (!window._mcTerms) {
+                LOG.warn('Termos não aceitos');
+                return;
+            }
             // Pula a etapa de confirmação e dispara o gerar diretamente
             if (confirmBtnYes) confirmBtnYes.click();
         };
