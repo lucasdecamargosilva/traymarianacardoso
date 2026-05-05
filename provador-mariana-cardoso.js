@@ -299,7 +299,7 @@
             box-shadow: 0 32px 80px rgba(0,0,0,0.18), 0 0 0 1px rgba(0,0,0,0.06);
             animation: mc-modal-in 0.35s cubic-bezier(0.22,1,0.36,1);
         }
-        .mc-content-scroll { padding: 28px 28px 0; overflow-y: auto; flex: 1; text-align: center; display: flex; flex-direction: column; gap: 20px; }
+        .mc-content-scroll { padding: 28px 28px 32px; overflow-y: auto; flex: 1; text-align: center; display: flex; flex-direction: column; gap: 20px; }
         .mc-close-ia {
             position: absolute; top: 18px; right: 18px;
             background: none; border: none; color: var(--mc-text-light);
@@ -444,10 +444,10 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t);})()" style="display:block;margin:12px 0 0;font-size:11px;color:#666;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
-                            <span id="mc-terms-icon" style="font-size:15px;vertical-align:middle;margin-right:5px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
+                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t);})()" style="display:block;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
+                            <span id="mc-terms-icon" style="font-size:18px;vertical-align:middle;margin-right:6px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
                         </div>
-                        <button class="mc-btn-black" id="mc-btn-generate" disabled>Ver no meu corpo</button>
+                        <button class="mc-btn-black" id="mc-btn-generate" disabled style="margin-bottom:24px;">Ver no meu corpo</button>
                     </div>
 
                     <!-- PASSO DE CONFIRMAÇÃO (oculto - mantido para compatibilidade) -->
