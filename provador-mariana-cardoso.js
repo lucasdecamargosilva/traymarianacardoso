@@ -19,7 +19,7 @@
     const LOGO_URL = 'https://images.tcdn.com.br/files/1173244/themes/75/img/settings/logo-new.svg';
 
     const WEBHOOK_LIMITE = 'https://n8n.segredosdodrop.com/webhook/limite-provas';
-    const DAILY_LIMIT = 2;
+    const DAILY_LIMIT = 3;
 
     LOG.info('Script carregado — Provador Virtual Mariana Cardoso (Tray)');
 
