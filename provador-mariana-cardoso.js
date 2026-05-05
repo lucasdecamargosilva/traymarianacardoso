@@ -373,17 +373,28 @@
             .mc-warning-back-front { font-size: 11px !important; padding: 10px 8px !important; line-height: 1.45 !important; }
         }
 
+        /* ── Result (mobile-first, layout Cacife) ── */
+        #mc-step-result { display: none; flex-direction: column; gap: 0; align-items: stretch; }
+        .mc-res-title { display: block !important; font-family: var(--font-display); font-size: 18px; letter-spacing: 3px; text-transform: uppercase; color: var(--mc-text); padding: 18px 28px 14px; margin: 0; border-bottom: 1px solid var(--mc-gold); text-align: center; }
+        #mc-result-img-col { width: 100%; max-height: 65vh; background: var(--mc-gray); overflow: hidden; display: flex; align-items: center; justify-content: center; border: none !important; margin: 0 !important; }
+        #mc-result-img-col img { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+        #mc-result-actions-col { display: flex; flex-direction: column; gap: 12px; padding: 20px 28px 0; }
+        #mc-size-recommendation { text-align: center; padding: 14px 16px; border: 1px solid var(--mc-gold); background: #fffaf0; }
+        #mc-size-recommendation p:first-child { margin: 0 0 4px; font-size: 9px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; color: var(--mc-text-light); }
+        #mc-rec-size-label { margin: 0; font-family: var(--font-display); font-size: 22px; letter-spacing: 3px; color: var(--mc-text); }
+        #mc-rec-size-desc { margin: 4px 0 0; font-size: 10px; color: var(--mc-text-light); line-height: 1.4; }
+        .mc-res-mobile-only { margin: 0; }
+
         @media (min-width: 768px) {
-            .mc-card-ia.is-result { width: 820px !important; max-width: 90vw !important; height: 560px !important; }
-            .mc-card-ia.is-result #mc-header-provador, .mc-card-ia.is-result .mc-powered-footer { display: none !important; }
-            .mc-card-ia.is-result .mc-content-scroll { padding: 0 !important; height: 100% !important; overflow: hidden !important; display: flex !important; flex-direction: column !important; gap: 0 !important; }
-            .mc-card-ia.is-result #mc-step-result { display: flex !important; flex-direction: row !important; width: 100%; height: 100%; align-items: stretch; }
-            .mc-card-ia.is-result #mc-result-img-col { width: 45% !important; height: 100% !important; margin: 0 !important; border: none !important; border-right: 1px solid var(--mc-gold) !important; position: relative !important; flex-shrink: 0; }
-            .mc-card-ia.is-result #mc-result-img-col img { position: absolute !important; top: 0; left: 0; width: 100% !important; height: 100% !important; object-fit: cover !important; object-position: top center !important; }
-            .mc-card-ia.is-result #mc-result-actions-col { width: 55% !important; height: 100% !important; padding: 40px !important; display: flex !important; flex-direction: column; justify-content: center; box-sizing: border-box; overflow-y: auto; }
-            .mc-card-ia.is-result .mc-res-title { display: block !important; font-family: var(--font-display); font-size: 22px; letter-spacing: 3px; text-transform: uppercase; color: var(--mc-text); margin-bottom: 8px; font-weight: 400; }
-            .mc-card-ia.is-result .mc-btn-buy, .mc-card-ia.is-result .mc-btn-outline { display: flex; align-items: center; justify-content: center; }
-            .mc-card-ia.is-result .mc-close-ia { top: 16px; right: 16px; z-index: 10; }
+            .mc-card-ia.is-result { width: 780px !important; max-width: 90vw !important; max-height: 92vh !important; height: auto !important; }
+            .mc-card-ia.is-result #mc-header-provador { display: none !important; }
+            .mc-card-ia.is-result .mc-content-scroll { padding: 0 !important; overflow-y: auto !important; display: flex !important; flex-direction: column !important; gap: 0 !important; }
+            .mc-card-ia.is-result #mc-step-result { display: flex !important; flex-direction: row !important; flex-wrap: wrap !important; width: 100%; align-items: stretch; gap: 0; }
+            .mc-card-ia.is-result .mc-res-title { flex-basis: 100%; order: -1; font-size: 16px; padding: 16px 24px; }
+            .mc-card-ia.is-result #mc-result-img-col { width: 44% !important; min-height: 380px !important; max-height: 80vh !important; border-right: 1px solid var(--mc-gold) !important; flex-shrink: 0; }
+            .mc-card-ia.is-result #mc-result-actions-col { width: 56% !important; padding: 28px 24px !important; gap: 12px; overflow-y: auto; }
+            .mc-card-ia.is-result .mc-res-mobile-only { display: flex !important; align-items: center; justify-content: center; gap: 8px; }
+            .mc-card-ia.is-result .mc-close-ia { top: 12px; right: 12px; z-index: 10; }
         }
         #mc-step-error { display: none; flex-direction: column; gap: 24px; align-items: center; text-align: center; padding: 52px 28px; }
         #mc-step-error h2 { font-family: var(--font-display); font-size: 22px; letter-spacing: 3px; text-transform: uppercase; margin: 0; font-weight: 400; }
@@ -481,24 +492,21 @@
                             <div style="position:absolute;top:0;left:0;height:100%;width:30%;background:var(--mc-text);animation:mc-slide 1.5s infinite linear;"></div>
                         </div>
                     </div>
-                    <div id="mc-step-result" style="display:none;flex-direction:column;align-items:center;">
-                        <div id="mc-result-img-col" style="width:100%;border:1px solid var(--mc-border);margin-bottom:30px;background:var(--mc-gray);">
-                            <img id="mc-final-view-img" style="width:100%;height:auto;display:block;">
+                    <div id="mc-step-result">
+                        <span class="mc-res-title">Veja como ficou em voc&ecirc; &#x2728;</span>
+                        <div id="mc-result-img-col">
+                            <img id="mc-final-view-img">
                         </div>
-                        <div id="mc-result-actions-col" style="width:100%;">
-                            <div id="mc-size-recommendation" style="display:none;text-align:center;margin-bottom:20px;padding:16px;border:1px solid var(--mc-border);background:var(--mc-gray);">
-                                <p style="margin:0 0 6px;font-size:9px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--mc-text-light);">Tamanho Recomendado</p>
-                                <p id="mc-rec-size-label" style="margin:0;font-size:22px;font-weight:800;letter-spacing:2px;color:#000;"></p>
-                                <p id="mc-rec-size-desc" style="margin:6px 0 0;font-size:10px;color:var(--mc-text-light);line-height:1.4;"></p>
-                            </div>
-                            <span class="mc-res-title" style="display:none;">Provador Virtual</span>
-                            <span class="mc-res-subtitle" style="display:none;">SIMULA\u00c7\u00c3O BASEADA NO SEU PERFIL CORPORAL</span>
-                            <div class="mc-res-note" style="display:none;">
-                                <i class="ph ph-info"></i>
-                                <span>A simula\u00e7\u00e3o AI considera o caimento do tecido baseado na sua estrutura corporal informada.</span>
+                        <div id="mc-result-actions-col">
+                            <div id="mc-size-recommendation" style="display:none;">
+                                <p>Tamanho Recomendado</p>
+                                <p id="mc-rec-size-label"></p>
+                                <p id="mc-rec-size-desc"></p>
                             </div>
                             <button class="mc-btn-outline" id="mc-btn-back">Voltar ao Produto</button>
-                            <p class="mc-res-mobile-only" style="margin-top:30px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);cursor:pointer;text-decoration:underline;text-underline-offset:4px;" id="mc-retry-btn">Tentar outra foto</p>
+                            <button class="mc-btn-black mc-res-mobile-only" id="mc-retry-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
+                                <i class="ph ph-camera"></i> Tentar outra foto
+                            </button>
                         </div>
                     </div>
                 </div>
