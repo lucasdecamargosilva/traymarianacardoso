@@ -1006,20 +1006,10 @@
             var section = document.getElementById('mc-related-products');
             if (!grid || !section) return;
 
-            // Seletores Tray + fallbacks comuns
-            var selectors = [
-                '.section-related-products .product-list-item',
-                '.related-products .product-list-item',
-                '.box-product-list .product-list-item',
-                '.product-list-related .product-list-item',
-                '.related-products li',
-                '.box-related-products .product-list-item'
-            ];
-            var items = [];
-            for (var s of selectors) {
-                items = document.querySelectorAll(s);
-                if (items.length) break;
-            }
+            // Seletores Tray Mariana Cardoso
+            var items = document.querySelectorAll('.product-related .item.swiper-slide');
+            if (!items.length) items = document.querySelectorAll('.product-related .product');
+            if (!items.length) items = document.querySelectorAll('.list-product .swiper-slide .product');
             if (!items.length) {
                 LOG.warn('Nenhum produto relacionado encontrado');
                 return;
@@ -1029,14 +1019,17 @@
             items.forEach(function(item) {
                 if (products.length >= 3) return;
                 try {
-                    var imgEl = item.querySelector('img');
-                    var nameEl = item.querySelector('.product-name, .name, h3, .title, [class*="name"]');
-                    var priceEl = item.querySelector('.product-price, .price, [class*="price"]');
-                    var linkEl = item.querySelector('a[href]');
+                    var imgEl = item.querySelector('img[data-src], img[src]');
+                    var nameEl = item.querySelector('.product-name');
+                    var priceOff = item.querySelector('.price-off');
+                    var priceLine = item.querySelector('.line-price');
+                    var linkEl = item.querySelector('a.info-product, a[href*="/"]');
 
                     var img = imgEl ? (imgEl.getAttribute('data-src') || imgEl.src) : '';
                     var name = nameEl ? nameEl.textContent.trim() : (imgEl && imgEl.alt ? imgEl.alt.trim() : '');
-                    var price = priceEl ? priceEl.textContent.trim().replace(/\s+/g, ' ') : '';
+                    var price = '';
+                    if (priceOff) price = priceOff.textContent.trim().replace(/\s+/g, ' ');
+                    else if (priceLine) price = priceLine.textContent.trim().replace(/\s+/g, ' ');
                     var link = linkEl ? linkEl.getAttribute('href') : '';
 
                     if (img && (name || price)) {
