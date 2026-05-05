@@ -760,13 +760,14 @@
         confirmBtnYes.onclick = async () => {
             LOG.info('Botão "Sim, gerar foto" clicado');
 
-            // 🚨 LIMITE DE USO DIÁRIO (2x por dia) — Supabase + localStorage 🚨
+            // 🚨 LIMITE DE USO DIÁRIO — Supabase + localStorage 🚨
             const today = new Date().toISOString().slice(0, 10);
             const storageKey = 'pl_usage_' + today;
             const localUsed = parseInt(localStorage.getItem(storageKey) || '0', 10);
 
             // Consulta servidor para contar provas do telefone hoje (sem expor credenciais)
             let dbUsed = 0;
+            let bypassActive = false;
             const phoneNorm = phoneInput.value.replace(/\D/g, '');
             try {
                 const dbRes = await fetch(WEBHOOK_LIMITE, {
@@ -780,13 +781,18 @@
                 if (dbRes.ok) {
                     const data = await dbRes.json();
                     dbUsed = data.count || 0;
-                    LOG.info('Provas no banco hoje: ' + dbUsed);
+                    bypassActive = data.bypass === true;
+                    LOG.info('Provas no banco hoje: ' + dbUsed + (bypassActive ? ' (bypass IP)' : ''));
+                    if (bypassActive) {
+                        // limpa contador local também
+                        localStorage.removeItem(storageKey);
+                    }
                 }
             } catch (e) {
                 LOG.warn('Falha ao consultar limite no servidor — usando localStorage');
             }
 
-            const usedToday = Math.max(localUsed, dbUsed);
+            const usedToday = bypassActive ? 0 : Math.max(localUsed, dbUsed);
             if (usedToday >= DAILY_LIMIT) {
                 if (confirmStep) confirmStep.style.display = 'none';
                 if (uploadStep) uploadStep.style.display = 'none';
