@@ -430,7 +430,7 @@
                                 </div>
                             </div>
                         </div>
-                        <div style="display:block !important;visibility:visible !important;margin:20px 0 0;font-size:11px;color:#555;text-align:center;line-height:1.5;padding:10px 8px;background:#fff8e6;border:1px solid #f0d77a;border-radius:4px;">&#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas. Se escolheu a frente, envie de frente.</div>
+                        <div style="display:block !important;visibility:visible !important;margin:20px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;padding:14px 12px;background:#fff8e6;border:1px solid #f0d77a;border-radius:4px;font-weight:500;">&#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas. Se escolheu a frente, envie de frente.</div>
                         <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;">
 
 
@@ -539,12 +539,57 @@
         const _initProd = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
         applyProduct(detectProduct(_initProd));
 
-        // ── Botão trigger acima da foto — DESATIVADO ──
-        // Mantém openBtn invisível para o btnProvadorNovo.onclick continuar funcionando
+        // ── Botão trigger acima da foto ──
         const openBtn = document.createElement('button');
+        openBtn.className = 'mc-btn-trigger-ia';
         openBtn.id = 'mc-open-ia';
-        openBtn.style.display = 'none';
-        document.body.appendChild(openBtn);
+        openBtn.setAttribute('aria-label', 'Abrir Provador Virtual');
+        openBtn.innerHTML = stampImageHTML;
+
+        const trayImgContainers = ['.image-show', '.box-gallery', '.product-colum-left'];
+        const fallbackContainers = [
+            '.product__media-wrapper', '.product-gallery__media', '.product__media',
+            '.product-image-main', '.product-media-container', '[data-media-id]',
+            '.product__media-item', '.product-gallery', '.product-single__media', '.media-gallery'
+        ];
+
+        let placed = false;
+        for (const sel of [...trayImgContainers, ...fallbackContainers]) {
+            const el = document.querySelector(sel);
+            if (el) {
+                const isMobile = window.innerWidth < 768;
+                const btnSize = isMobile ? '80px' : '60px';
+                document.body.appendChild(openBtn);
+                openBtn.style.position = 'fixed';
+                openBtn.style.zIndex = '50';
+                openBtn.style.width = btnSize;
+                openBtn.style.height = btnSize;
+
+                function positionBtn() {
+                    const rect = el.getBoundingClientRect();
+                    const btnTop = rect.top + (isMobile ? 70 : 15);
+                    const threshold = isMobile ? 80 : 120;
+                    if (btnTop < threshold || rect.bottom < 0) {
+                        openBtn.style.visibility = 'hidden';
+                    } else {
+                        openBtn.style.visibility = 'visible';
+                        openBtn.style.top = btnTop + 'px';
+                        openBtn.style.left = (rect.right - (isMobile ? 100 : 180)) + 'px';
+                    }
+                }
+                positionBtn();
+                window.addEventListener('scroll', positionBtn);
+                window.addEventListener('resize', positionBtn);
+                placed = true;
+                LOG.ok('Botão posicionado (' + (isMobile ? 'mobile' : 'desktop') + ') sobre: "' + sel + '"');
+                break;
+            }
+        }
+        if (!placed) {
+            document.body.appendChild(openBtn);
+            openBtn.style.cssText = 'position:fixed;bottom:100px;left:20px;z-index:50;width:60px;height:60px;display:flex;align-items:center;justify-content:center;cursor:pointer;background:none;border:none;padding:0;';
+            LOG.warn('Nenhum container encontrado — botão fixado no canto (fallback)');
+        }
 
         const modal = document.getElementById('mc-modal-ia');
         const genBtn = document.getElementById('mc-btn-generate');
