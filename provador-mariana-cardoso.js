@@ -367,6 +367,10 @@
         #mc-step-confirm { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
         .mc-confirm-box { background: #fff; width: 100%; max-width: 380px; padding: 40px 30px; border: 1px solid #e8e8e8; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-radius: 4px; }
 
+        @media (max-width: 767px) {
+            .mc-warning-back-front { font-size: 11px !important; padding: 10px 8px !important; line-height: 1.45 !important; }
+        }
+
         @media (min-width: 768px) {
             .mc-card-ia.is-result { width: 820px !important; max-width: 90vw !important; height: 560px !important; }
             .mc-card-ia.is-result #mc-header-provador, .mc-card-ia.is-result .mc-powered-footer { display: none !important; }
@@ -436,7 +440,7 @@
                             <div class="mc-tip-item"><i class="ph ph-person"></i><span>Corpo Inteiro</span></div>
                             <div class="mc-tip-item"><i class="ph ph-sun"></i><span>Boa Luz</span></div>
                         </div>
-                        <div style="display:block !important;visibility:visible !important;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;padding:14px 12px;background:#fff8e6;border:1px solid #f0d77a;border-radius:4px;font-weight:500;">&#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas. Se escolheu a frente, envie de frente.</div>
+                        <div class="mc-warning-back-front" style="display:block !important;visibility:visible !important;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;padding:14px 12px;background:#fff8e6;border:1px solid #f0d77a;border-radius:4px;font-weight:500;">&#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas. Se escolheu a frente, envie de frente.</div>
                         <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;">
 
 
