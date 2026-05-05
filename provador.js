@@ -436,6 +436,7 @@
                             <div class="mc-tip-item"><i class="ph ph-person"></i><span>Corpo Inteiro</span></div>
                             <div class="mc-tip-item"><i class="ph ph-sun"></i><span>Boa Luz</span></div>
                         </div>
+                        <div style="display:block !important;visibility:visible !important;margin:14px 0 0;font-size:11px;color:#555;text-align:center;line-height:1.5;padding:10px 8px;background:#fff8e6;border:1px solid #f0d77a;border-radius:4px;">&#9888;&#65039; Se voc&#234; escolheu a foto de costas, envie uma foto sua tamb&#233;m de costas. Se escolheu a frente, envie de frente.</div>
                         <div style="display:flex;gap:20px;justify-content:center;margin-top:20px;">
 
 
