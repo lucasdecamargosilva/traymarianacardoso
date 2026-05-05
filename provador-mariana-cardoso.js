@@ -363,6 +363,8 @@
 
         @keyframes mc-slide { from{transform:translateX(-100%)} to{transform:translateX(100%)} }
         @keyframes mc-pulse-text { 0%,100%{opacity:0.4} 50%{opacity:1} }
+        @keyframes mc-alt-show { 0%,5%{opacity:0;transform:translateY(6px)} 15%,45%{opacity:1;transform:translateY(0)} 55%,100%{opacity:0;transform:translateY(-6px)} }
+        @keyframes mc-alt-hide { 0%,55%{opacity:0;transform:translateY(6px)} 65%,95%{opacity:1;transform:translateY(0)} 100%{opacity:0;transform:translateY(-6px)} }
 
         #mc-step-confirm { position: absolute; inset: 0; background: rgba(0,0,0,0.5); backdrop-filter: blur(2px); z-index: 200; display: none; align-items: center; justify-content: center; padding: 20px; }
         .mc-confirm-box { background: #fff; width: 100%; max-width: 380px; padding: 40px 30px; border: 1px solid #e8e8e8; text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.2); border-radius: 4px; }
@@ -467,10 +469,16 @@
                     </div>
 
 
-                    <div style="display:none;padding:60px 0;text-align:center;" id="mc-loading-box">
-                        <div style="font-weight:600;font-size:12px;letter-spacing:3px;text-transform:uppercase;margin-bottom:20px;animation:mc-pulse-text 1.5s infinite ease-in-out;">Gerando Prova Virtual...</div>
-                        <div style="height:1px;background:var(--mc-gray);width:100%;position:relative;overflow:hidden;">
-                            <div style="position:absolute;top:0;left:0;height:100%;width:30%;background:var(--mc-primary);animation:mc-slide 1.5s infinite linear;"></div>
+                    <div id="mc-loading-box" style="display:none;padding:60px 28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;min-height:240px;">
+                        <div class="mc-loading-texts" style="position:relative;height:36px;width:100%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">
+                            <div class="mc-loading-t1" style="position:absolute;width:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;letter-spacing:4px;text-transform:uppercase;color:var(--mc-text);animation:mc-alt-show 3.6s ease-in-out infinite;">Gerando Prova Virtual</div>
+                            <a href="https://provoulevou.com.br" target="_blank" class="mc-loading-t2" style="position:absolute;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;opacity:0;animation:mc-alt-hide 3.6s ease-in-out infinite;">
+                                <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mc-text-light);font-family:var(--font-body);">Powered by</span>
+                                <img src="https://i.ibb.co/MD3B4FQf/Logo-provou-preto-1.png" alt="Provou Levou" style="height:24px;width:auto;opacity:0.8;">
+                            </a>
+                        </div>
+                        <div style="height:1px;background:#e8e8e8;width:100%;position:relative;overflow:hidden;">
+                            <div style="position:absolute;top:0;left:0;height:100%;width:30%;background:var(--mc-text);animation:mc-slide 1.5s infinite linear;"></div>
                         </div>
                     </div>
                     <div id="mc-step-result" style="display:none;flex-direction:column;align-items:center;">
@@ -838,7 +846,7 @@
             LOG.info('Categoria: ' + currentProduct.category + '  |  Fit: ' + currentProduct.fit);
 
             document.getElementById('mc-step-upload').style.display = 'none';
-            document.getElementById('mc-loading-box').style.display = 'block';
+            document.getElementById('mc-loading-box').style.display = 'flex';
 
             try {
                 const fd = new FormData();
