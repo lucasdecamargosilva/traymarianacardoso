@@ -564,7 +564,7 @@
             const el = document.querySelector(sel);
             if (el) {
                 const isMobile = window.innerWidth < 768;
-                const btnSize = isMobile ? '80px' : '95px';
+                const btnSize = isMobile ? '80px' : '70px';
                 document.body.appendChild(openBtn);
                 openBtn.style.position = 'fixed';
                 openBtn.style.zIndex = '50';
@@ -580,7 +580,7 @@
                     } else {
                         openBtn.style.visibility = 'visible';
                         openBtn.style.top = btnTop + 'px';
-                        openBtn.style.left = (rect.right - (isMobile ? 100 : 200)) + 'px';
+                        openBtn.style.left = (rect.right - (isMobile ? 100 : 180)) + 'px';
                     }
                 }
                 positionBtn();
