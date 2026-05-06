@@ -762,6 +762,18 @@
                 LOG.warn('Termos não aceitos');
                 return;
             }
+            // Se telefone preenchido, valida (mas não bloqueia o botão visualmente)
+            const _gNums = (phoneInput.value || '').replace(/\D/g, '');
+            if (_gNums.length > 0) {
+                const _gPhoneOk = (_gNums.length === 10 || _gNums.length === 11) && /^[1-9][1-9]/.test(_gNums) && (_gNums.length === 10 || _gNums[2] === '9');
+                if (!_gPhoneOk) {
+                    LOG.warn('Telefone preenchido mas inválido — bloqueia envio');
+                    document.getElementById('mc-phone-error').style.display = 'block';
+                    phoneInput.style.borderColor = '#ef4444';
+                    phoneInput.focus();
+                    return;
+                }
+            }
             // Pula a etapa de confirmação e dispara o gerar diretamente
             if (confirmBtnYes) confirmBtnYes.click();
         };
