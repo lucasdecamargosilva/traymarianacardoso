@@ -477,7 +477,7 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t);})()" style="display:block;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
+                        <div id="mc-terms-row" style="display:block;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
                             <span id="mc-terms-icon" style="font-size:18px;vertical-align:middle;margin-right:6px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
                         </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled style="margin-bottom:24px;">Ver no meu corpo</button>
@@ -721,6 +721,20 @@
             const el = document.getElementById(id);
             if (el) el.addEventListener('input', checkFields);
         });
+
+        // Terms row click — toggle e revalida
+        const termsRow = document.getElementById('mc-terms-row');
+        if (termsRow) {
+            termsRow.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') return; // não toggle se clicar no link de termos
+                window._mcTerms = !window._mcTerms;
+                const icon = document.getElementById('mc-terms-icon');
+                if (icon) icon.textContent = window._mcTerms ? '☑' : '☐';
+                termsRow.style.opacity = window._mcTerms ? '1' : '0.6';
+                LOG.info('Termos: ' + window._mcTerms);
+                checkFields();
+            });
+        }
 
 
         realInput.onchange = (e) => {
