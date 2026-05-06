@@ -477,7 +477,7 @@
                                 <img id="mc-pre-img" style="width:100%;height:100%;object-fit:cover;">
                             </div>
                         </div>
-                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';var n=document.getElementById('mc-phone').value.replace(/\D/g,'');var pOk=n.length===0||((n.length===10||n.length===11)&&/^[1-9][1-9]/.test(n)&&(n.length===10||n[2]==='9'));document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t&&pOk);})()" style="display:block;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
+                        <div id="mc-terms-row" onclick="(function(){var t=window._mcTerms=!window._mcTerms;document.getElementById('mc-terms-icon').textContent=t?'☑':'☐';document.getElementById('mc-terms-row').style.opacity=t?'1':'0.6';document.getElementById('mc-btn-generate').disabled=!(window._mcPhoto&&t);})()" style="display:block;margin:14px 0 0;font-size:13px;color:#444;text-align:center;line-height:1.6;cursor:pointer;opacity:0.6;user-select:none;">
                             <span id="mc-terms-icon" style="font-size:18px;vertical-align:middle;margin-right:6px;">&#9744;</span><span>Concordo com os <a href="http://provoulevou.com.br/termos.html" target="_blank" onclick="event.stopPropagation()" style="color:var(--mc-gold);text-decoration:underline;">Termos e Condi&#231;&#245;es</a></span>
                         </div>
                         <button class="mc-btn-black" id="mc-btn-generate" disabled style="margin-bottom:24px;">Ver no meu corpo</button>
@@ -712,7 +712,7 @@
             const phoneOk = (nums.length === 10 || nums.length === 11) && /^[1-9][1-9]/.test(nums) && (nums.length === 10 || nums[2] === '9');
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            const allOk = !!userPhoto && !!window._mcTerms && (nums.length === 0 || phoneOk);
+            const allOk = !!userPhoto && !!window._mcTerms;
             genBtn.disabled = !allOk;
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' termos:' + !!window._mcTerms + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
@@ -743,15 +743,6 @@
             if (!userPhoto) {
                 LOG.warn('Tentativa de gerar sem foto selecionada');
                 return;
-            }
-            const _gNums = (phoneInput.value || '').replace(/\D/g, '');
-            if (_gNums.length > 0) {
-                const _gPhoneOk = (_gNums.length === 10 || _gNums.length === 11) && /^[1-9][1-9]/.test(_gNums) && (_gNums.length === 10 || _gNums[2] === '9');
-                if (!_gPhoneOk) {
-                    LOG.warn('Telefone preenchido mas inválido — não gera');
-                    phoneInput.focus();
-                    return;
-                }
             }
             if (!window._mcTerms) {
                 LOG.warn('Termos não aceitos');
