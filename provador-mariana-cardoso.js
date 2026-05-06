@@ -712,7 +712,7 @@
             const phoneOk = (nums.length === 10 || nums.length === 11) && /^[1-9][1-9]/.test(nums) && (nums.length === 10 || nums[2] === '9');
             document.getElementById('mc-phone-error').style.display = (phoneInput.value.length > 0 && !phoneOk) ? 'block' : 'none';
             phoneInput.style.borderColor = (phoneInput.value.length > 0 && !phoneOk) ? '#ef4444' : 'var(--mc-border)';
-            const allOk = !!userPhoto && !!window._mcTerms;
+            const allOk = !!userPhoto && !!window._mcTerms && phoneOk;
             genBtn.disabled = !allOk;
             LOG.info('Validação campos — phone:' + phoneOk + ' foto:' + !!userPhoto + ' termos:' + !!window._mcTerms + ' → botão ' + (allOk ? 'HABILITADO' : 'desabilitado'));
         }
@@ -762,17 +762,14 @@
                 LOG.warn('Termos não aceitos');
                 return;
             }
-            // Se telefone preenchido, valida (mas não bloqueia o botão visualmente)
             const _gNums = (phoneInput.value || '').replace(/\D/g, '');
-            if (_gNums.length > 0) {
-                const _gPhoneOk = (_gNums.length === 10 || _gNums.length === 11) && /^[1-9][1-9]/.test(_gNums) && (_gNums.length === 10 || _gNums[2] === '9');
-                if (!_gPhoneOk) {
-                    LOG.warn('Telefone preenchido mas inválido — bloqueia envio');
-                    document.getElementById('mc-phone-error').style.display = 'block';
-                    phoneInput.style.borderColor = '#ef4444';
-                    phoneInput.focus();
-                    return;
-                }
+            const _gPhoneOk = (_gNums.length === 10 || _gNums.length === 11) && /^[1-9][1-9]/.test(_gNums) && (_gNums.length === 10 || _gNums[2] === '9');
+            if (!_gPhoneOk) {
+                LOG.warn('Telefone vazio ou inválido — bloqueia envio');
+                document.getElementById('mc-phone-error').style.display = 'block';
+                phoneInput.style.borderColor = '#ef4444';
+                phoneInput.focus();
+                return;
             }
             // Pula a etapa de confirmação e dispara o gerar diretamente
             if (confirmBtnYes) confirmBtnYes.click();
