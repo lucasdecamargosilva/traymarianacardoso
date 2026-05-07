@@ -332,11 +332,23 @@
         .mc-input-hint { font-size: 10px; color: var(--mc-text-light); margin-top: 4px; }
         .mc-status-msg { display: none; font-size: 10px; color: #ef4444; font-weight: 600; margin-top: 4px; }
 
+        .mc-provas-msg:empty { display: none; }
         .mc-provas-msg {
-            font-size: 11px; margin-top: 6px; letter-spacing: 0.3px;
-            color: var(--mc-text-light, #888); min-height: 14px; transition: color 0.2s;
+            font-size: 13px; margin-top: 10px; letter-spacing: 0.3px;
+            color: var(--mc-text, #1a1a1a); font-weight: 500;
+            background: var(--mc-surface, #f7f6f4);
+            border: 1px solid var(--mc-border, #e8e8e8);
+            border-radius: 6px;
+            padding: 10px 14px;
+            text-align: center;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
         }
-        .mc-provas-msg.is-warn { color: #ef4444; font-weight: 500; }
+        .mc-provas-msg.is-warn {
+            color: #ef4444;
+            background: rgba(239,68,68,0.08);
+            border-color: rgba(239,68,68,0.3);
+            font-weight: 600;
+        }
 
 
         .mc-tips-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0; border-top: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8; }
