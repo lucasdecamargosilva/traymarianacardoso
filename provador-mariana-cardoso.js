@@ -521,6 +521,7 @@
                                 <p id="mc-rec-size-label"></p>
                                 <p id="mc-rec-size-desc"></p>
                             </div>
+                            <div id="mc-provas-restantes-result" class="mc-provas-msg" style="text-align:center;margin-bottom:8px;"></div>
                             <button class="mc-btn-outline" id="mc-btn-back">Voltar ao Produto</button>
                             <button class="mc-btn-black mc-res-mobile-only" id="mc-retry-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;">
                                 <i class="ph ph-camera"></i> Tentar outra foto
@@ -717,12 +718,12 @@
 
         // ── Contador de provas restantes (debounced) ──
         let _mcProvasDebounce;
-        const _mcProvasMsg = document.getElementById('mc-provas-restantes');
         async function _mcCheckProvasRestantes() {
-            if (!_mcProvasMsg) return;
+            const _mcEls = document.querySelectorAll('.mc-provas-msg');
+            if (!_mcEls.length) return;
             const nums = phoneInput.value.replace(/\D/g, '');
             const phoneOk = (nums.length === 10 || nums.length === 11) && /^[1-9][1-9]/.test(nums) && (nums.length === 10 || nums[2] === '9');
-            if (!phoneOk) { _mcProvasMsg.textContent = ''; _mcProvasMsg.classList.remove('is-warn'); return; }
+            if (!phoneOk) { _mcEls.forEach(el => { el.textContent = ''; el.classList.remove('is-warn'); }); return; }
             try {
                 const phone = '55' + nums;
                 const r = await fetch(WEBHOOK_LIMITE, {
@@ -734,13 +735,13 @@
                 const used = Math.max(d.count || 0, d.phone_count || 0, d.ip_count || 0);
                 const restantes = Math.max(0, DAILY_LIMIT - used);
                 if (restantes > 0) {
-                    _mcProvasMsg.textContent = restantes + (restantes === 1 ? ' prova restante hoje' : ' provas restantes hoje');
-                    _mcProvasMsg.classList.remove('is-warn');
+                    _mcEls.forEach(el => el.textContent = restantes + (restantes === 1 ? ' prova restante hoje' : ' provas restantes hoje'));
+                    _mcEls.forEach(el => el.classList.remove('is-warn'));
                 } else {
-                    _mcProvasMsg.textContent = 'Limite de ' + DAILY_LIMIT + ' provas atingido — volte amanhã.';
-                    _mcProvasMsg.classList.add('is-warn');
+                    _mcEls.forEach(el => el.textContent = 'Limite de ' + DAILY_LIMIT + ' provas atingido — volte amanhã.');
+                    _mcEls.forEach(el => el.classList.add('is-warn'));
                 }
-            } catch(_) { _mcProvasMsg.textContent = ''; _mcProvasMsg.classList.remove('is-warn'); }
+            } catch(_) { _mcEls.forEach(el => el.textContent = ''); _mcEls.forEach(el => el.classList.remove('is-warn')); }
         }
 
         phoneInput.addEventListener('input', () => {
@@ -1043,6 +1044,7 @@
 
                     document.querySelector('.mc-card-ia').classList.add('is-result');
                     document.getElementById('mc-step-result').style.display = 'flex';
+                    if (typeof _mcCheckProvasRestantes === 'function') _mcCheckProvasRestantes();
                     loadRelatedProducts();
                     LOG.ok('Resultado exibido.' + (recSize ? ' Tamanho recomendado: ' + recSize : ''));
 
