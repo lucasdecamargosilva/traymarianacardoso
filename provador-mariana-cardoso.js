@@ -332,6 +332,13 @@
         .mc-input-hint { font-size: 10px; color: var(--mc-text-light); margin-top: 4px; }
         .mc-status-msg { display: none; font-size: 10px; color: #ef4444; font-weight: 600; margin-top: 4px; }
 
+        .mc-provas-msg {
+            font-size: 11px; margin-top: 6px; letter-spacing: 0.3px;
+            color: var(--mc-text-light, #888); min-height: 14px; transition: color 0.2s;
+        }
+        .mc-provas-msg.is-warn { color: #ef4444; font-weight: 500; }
+
+
         .mc-tips-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 16px 0; border-top: 1px solid #e8e8e8; border-bottom: 1px solid #e8e8e8; }
         .mc-tip-item { display: flex; flex-direction: column; align-items: center; gap: 6px; font-size: 9px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--mc-text-light); }
         .mc-tip-item i { color: var(--mc-gold); font-size: 20px; }
@@ -430,6 +437,7 @@
                                 <label>SEU CELULAR</label>
                                 <input type="tel" id="mc-phone" class="mc-input" placeholder="(11) 99999-9999" maxlength="15">
                                 <div id="mc-phone-error" class="mc-status-msg">Insira um n\u00famero v\u00e1lido</div>
+                                <div id="mc-provas-restantes" class="mc-provas-msg"></div>
                             </div>
                             <div id="mc-calca-fields">
                                 <p style="margin:0 0 8px;font-size:10px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);text-align:center;">Suas medidas (recomenda\u00e7\u00e3o de tamanho)</p>
@@ -706,6 +714,40 @@
             e.target.value = !x[2] ? x[1] : '(' + x[1] + ') ' + x[2] + (x[3] ? '-' + x[3] : '');
             checkFields();
         });
+
+        // ── Contador de provas restantes (debounced) ──
+        let _mcProvasDebounce;
+        const _mcProvasMsg = document.getElementById('mc-provas-restantes');
+        async function _mcCheckProvasRestantes() {
+            if (!_mcProvasMsg) return;
+            const nums = phoneInput.value.replace(/\D/g, '');
+            const phoneOk = (nums.length === 10 || nums.length === 11) && /^[1-9][1-9]/.test(nums) && (nums.length === 10 || nums[2] === '9');
+            if (!phoneOk) { _mcProvasMsg.textContent = ''; _mcProvasMsg.classList.remove('is-warn'); return; }
+            try {
+                const phone = '55' + nums;
+                const r = await fetch(WEBHOOK_LIMITE, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone, body: { phone } })
+                });
+                const d = await r.json();
+                const used = (d.count !== undefined ? d.count : (d.phone_count || 0));
+                const restantes = Math.max(0, DAILY_LIMIT - used);
+                if (restantes > 0) {
+                    _mcProvasMsg.textContent = restantes + (restantes === 1 ? ' prova restante hoje' : ' provas restantes hoje');
+                    _mcProvasMsg.classList.remove('is-warn');
+                } else {
+                    _mcProvasMsg.textContent = 'Limite de ' + DAILY_LIMIT + ' provas atingido — volte amanhã.';
+                    _mcProvasMsg.classList.add('is-warn');
+                }
+            } catch(_) { _mcProvasMsg.textContent = ''; _mcProvasMsg.classList.remove('is-warn'); }
+        }
+
+        phoneInput.addEventListener('input', () => {
+            clearTimeout(_mcProvasDebounce);
+            _mcProvasDebounce = setTimeout(_mcCheckProvasRestantes, 600);
+        });
+
 
         function checkFields() {
             const nums = phoneInput.value.replace(/\D/g, '');
