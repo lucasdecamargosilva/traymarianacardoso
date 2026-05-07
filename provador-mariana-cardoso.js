@@ -731,7 +731,7 @@
                     body: JSON.stringify({ phone, body: { phone } })
                 });
                 const d = await r.json();
-                const used = (d.count !== undefined ? d.count : (d.phone_count || 0));
+                const used = Math.max(d.count || 0, d.phone_count || 0, d.ip_count || 0);
                 const restantes = Math.max(0, DAILY_LIMIT - used);
                 if (restantes > 0) {
                     _mcProvasMsg.textContent = restantes + (restantes === 1 ? ' prova restante hoje' : ' provas restantes hoje');
