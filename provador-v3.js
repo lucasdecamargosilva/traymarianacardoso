@@ -444,7 +444,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="https://provoulevou.com.br" target="_blank" class="mc-powered-footer" style="text-decoration:none;">
+                <a href="https://provoulevou.com.br/?utm_source=widget&utm_medium=parceiro&utm_campaign=mariana" target="_blank" rel="dofollow noopener" class="mc-powered-footer" style="text-decoration:none;">
                     <span style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);">Powered by</span>
                     <img src="https://provoulevou.com.br/assets/provoulevou-logo.png" class="mc-quantic-logo" alt="Provou Levou">
                 </a>
