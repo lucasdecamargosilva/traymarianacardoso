@@ -1,4 +1,37 @@
 (function () {
+
+    // ─── SEO BACKLINK BADGE (mini logo discreto pro crawler do Google) ───
+    (function() {
+        function injectPLBadge() {
+            try {
+                if (document.querySelector('.pl-seo-badge')) return;
+                var path = window.location.pathname;
+                var isProduct = path.includes('/produto/') || path.includes('/produtos/') || path.includes('/products/') || path.includes('/p/') || document.querySelector('meta[property="og:type"][content="product"]');
+                if (!isProduct) return;
+                var b = document.createElement('div');
+                b.className = 'pl-seo-badge';
+                b.style.cssText = 'text-align:center;padding:4px 0;margin:0;opacity:0.5;line-height:1;';
+                var a = document.createElement('a');
+                a.href = 'https://provoulevou.com.br?utm_source=widget&utm_medium=lojista&utm_campaign=mariana';
+                a.target = '_blank';
+                a.rel = 'noopener';
+                a.title = 'Provador Virtual de Roupas — Provou Levou';
+                a.style.cssText = 'display:inline-block;text-decoration:none;border:0;outline:0;';
+                var img = document.createElement('img');
+                img.src = 'https://i.ibb.co/MD3B4FQf/Logo-provou-preto-1.png';
+                img.alt = 'Provador Virtual de Roupas — Provou Levou';
+                img.style.cssText = 'height:12px;width:auto;border:0;display:block;';
+                a.appendChild(img);
+                b.appendChild(a);
+                document.body.appendChild(b);
+            } catch(e) {}
+        }
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectPLBadge);
+        else injectPLBadge();
+        setTimeout(injectPLBadge, 2500);
+    })();
+
+
     // ─── LOG HELPER ───────────────────────────────────────────────────────────────
     const LOG = {
         info: (...a) => console.log('[PL]', ...a),
@@ -513,7 +546,7 @@
                     <div id="mc-loading-box" style="display:none;padding:60px 28px;text-align:center;flex-direction:column;align-items:center;justify-content:center;min-height:240px;">
                         <div class="mc-loading-texts" style="position:relative;height:36px;width:100%;display:flex;align-items:center;justify-content:center;margin-bottom:24px;">
                             <div class="mc-loading-t1" style="position:absolute;width:100%;display:flex;align-items:center;justify-content:center;font-family:var(--font-display);font-size:18px;letter-spacing:4px;text-transform:uppercase;color:var(--mc-text);animation:mc-alt-show 3.6s ease-in-out infinite;">Gerando Prova Virtual</div>
-                            <a href="https://provoulevou.com.br" target="_blank" class="mc-loading-t2" style="position:absolute;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;opacity:0;animation:mc-alt-hide 3.6s ease-in-out infinite;">
+                            <a href="https://provoulevou.com.br?utm_source=widget&utm_medium=lojista&utm_campaign=mariana" target="_blank" class="mc-loading-t2" style="position:absolute;width:100%;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;opacity:0;animation:mc-alt-hide 3.6s ease-in-out infinite;">
                                 <span style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--mc-text-light);font-family:var(--font-body);">Powered by</span>
                                 <img src="https://i.ibb.co/MD3B4FQf/Logo-provou-preto-1.png" alt="Provou Levou" style="height:16px;width:auto;opacity:0.8;">
                             </a>
@@ -545,7 +578,7 @@
                         </div>
                     </div>
                 </div>
-                <a href="https://provoulevou.com.br" target="_blank" class="mc-powered-footer" style="text-decoration:none;">
+                <a href="https://provoulevou.com.br?utm_source=widget&utm_medium=lojista&utm_campaign=mariana" target="_blank" class="mc-powered-footer" style="text-decoration:none;">
                     <span style="font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--mc-text-light);">Powered by</span>
                     <img src="https://i.ibb.co/MD3B4FQf/Logo-provou-preto-1.png" class="mc-quantic-logo" alt="Provou Levou">
                 </a>
