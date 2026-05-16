@@ -889,250 +889,278 @@
 
 
         confirmBtnYes.onclick = async () => {
-            LOG.info('Botão "Sim, gerar foto" clicado');
 
-            // 🚨 LIMITE DE USO DIÁRIO — Supabase + localStorage 🚨
-            const today = new Date().toISOString().slice(0, 10);
-            const storageKey = 'pl_usage_' + today;
-            const localUsed = parseInt(localStorage.getItem(storageKey) || '0', 10);
 
-            // Consulta servidor para contar provas do telefone hoje (sem expor credenciais)
-            let dbUsed = 0;
-            let bypassActive = false;
-            const phoneNorm = phoneInput.value.replace(/\D/g, '');
+
+            if (window._provouLevouBusy) return;
+
+
+
+            window._provouLevouBusy = true;
+
+
+
             try {
-                const dbRes = await fetch(WEBHOOK_LIMITE, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        telefone: phoneNorm,
-                        origin: 'usemarianacardoso.com.br'
-                    })
-                });
-                if (dbRes.ok) {
-                    const data = await dbRes.json();
-                    dbUsed = data.count || 0;
-                    bypassActive = data.bypass === true;
-                    LOG.info('Provas no banco hoje: ' + dbUsed + (bypassActive ? ' (bypass IP)' : ''));
-                    if (bypassActive) {
-                        // limpa contador local também
-                        localStorage.removeItem(storageKey);
-                    }
-                }
-            } catch (e) {
-                LOG.warn('Falha ao consultar limite no servidor — usando localStorage');
-            }
+                LOG.info('Botão "Sim, gerar foto" clicado');
 
-            const usedToday = bypassActive ? 0 : Math.max(localUsed, dbUsed);
-            if (usedToday >= DAILY_LIMIT) {
+                // 🚨 LIMITE DE USO DIÁRIO — Supabase + localStorage 🚨
+                const today = new Date().toISOString().slice(0, 10);
+                const storageKey = 'pl_usage_' + today;
+                const localUsed = parseInt(localStorage.getItem(storageKey) || '0', 10);
+
+                // Consulta servidor para contar provas do telefone hoje (sem expor credenciais)
+                let dbUsed = 0;
+                let bypassActive = false;
+                const phoneNorm = phoneInput.value.replace(/\D/g, '');
+                try {
+                    const dbRes = await fetch(WEBHOOK_LIMITE, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            telefone: phoneNorm,
+                            origin: 'usemarianacardoso.com.br'
+                        })
+                    });
+                    if (dbRes.ok) {
+                        const data = await dbRes.json();
+                        dbUsed = data.count || 0;
+                        bypassActive = data.bypass === true;
+                        LOG.info('Provas no banco hoje: ' + dbUsed + (bypassActive ? ' (bypass IP)' : ''));
+                        if (bypassActive) {
+                            // limpa contador local também
+                            localStorage.removeItem(storageKey);
+                        }
+                    }
+                } catch (e) {
+                    LOG.warn('Falha ao consultar limite no servidor — usando localStorage');
+                }
+
+                const usedToday = bypassActive ? 0 : Math.max(localUsed, dbUsed);
+                if (usedToday >= DAILY_LIMIT) {
+                    if (confirmStep) confirmStep.style.display = 'none';
+                    if (uploadStep) uploadStep.style.display = 'none';
+                    document.getElementById('mc-loading-box').style.display = 'none';
+                    document.getElementById('mc-step-result').style.display = 'none';
+
+                    let limitMsg = document.getElementById('mc-limit-msg');
+                    if (!limitMsg) {
+                        limitMsg = document.createElement('div');
+                        limitMsg.id = 'mc-limit-msg';
+                        limitMsg.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 30px;';
+
+                        const icon = document.createElement('i');
+                        icon.className = 'ph ph-clock';
+                        icon.style.cssText = 'font-size:48px;color:var(--mc-primary);margin-bottom:20px;';
+
+                        const title = document.createElement('h2');
+                        title.style.cssText = 'margin:0 0 12px;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;';
+                        title.textContent = 'Limite atingido';
+
+                        const desc = document.createElement('p');
+                        desc.style.cssText = 'margin:0 0 30px;font-size:12px;color:var(--mc-text-light);letter-spacing:0.5px;line-height:1.6;';
+                        desc.textContent = 'Voc\u00ea j\u00e1 usou suas ' + DAILY_LIMIT + ' provas virtuais de hoje. Volte amanh\u00e3 para experimentar mais looks!';
+
+                        const btn = document.createElement('button');
+                        btn.className = 'mc-btn-outline';
+                        btn.id = 'mc-limit-close';
+                        btn.style.maxWidth = '280px';
+                        btn.textContent = 'Voltar ao Produto';
+                        btn.onclick = () => {
+                            modal.style.display = 'none';
+                            unlockBodyScroll();
+                            limitMsg.style.display = 'none';
+                            if (uploadStep) uploadStep.style.display = 'block';
+                        };
+
+                        limitMsg.appendChild(icon);
+                        limitMsg.appendChild(title);
+                        limitMsg.appendChild(desc);
+                        limitMsg.appendChild(btn);
+                        document.querySelector('.mc-content-scroll').appendChild(limitMsg);
+                    }
+                    limitMsg.style.display = 'flex';
+                    return;
+                }
+
                 if (confirmStep) confirmStep.style.display = 'none';
                 if (uploadStep) uploadStep.style.display = 'none';
-                document.getElementById('mc-loading-box').style.display = 'none';
-                document.getElementById('mc-step-result').style.display = 'none';
-
-                let limitMsg = document.getElementById('mc-limit-msg');
-                if (!limitMsg) {
-                    limitMsg = document.createElement('div');
-                    limitMsg.id = 'mc-limit-msg';
-                    limitMsg.style.cssText = 'display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:60px 30px;';
-
-                    const icon = document.createElement('i');
-                    icon.className = 'ph ph-clock';
-                    icon.style.cssText = 'font-size:48px;color:var(--mc-primary);margin-bottom:20px;';
-
-                    const title = document.createElement('h2');
-                    title.style.cssText = 'margin:0 0 12px;font-size:18px;font-weight:700;letter-spacing:2px;text-transform:uppercase;';
-                    title.textContent = 'Limite atingido';
-
-                    const desc = document.createElement('p');
-                    desc.style.cssText = 'margin:0 0 30px;font-size:12px;color:var(--mc-text-light);letter-spacing:0.5px;line-height:1.6;';
-                    desc.textContent = 'Voc\u00ea j\u00e1 usou suas ' + DAILY_LIMIT + ' provas virtuais de hoje. Volte amanh\u00e3 para experimentar mais looks!';
-
-                    const btn = document.createElement('button');
-                    btn.className = 'mc-btn-outline';
-                    btn.id = 'mc-limit-close';
-                    btn.style.maxWidth = '280px';
-                    btn.textContent = 'Voltar ao Produto';
-                    btn.onclick = () => {
-                        modal.style.display = 'none';
-                        unlockBodyScroll();
-                        limitMsg.style.display = 'none';
-                        if (uploadStep) uploadStep.style.display = 'block';
-                    };
-
-                    limitMsg.appendChild(icon);
-                    limitMsg.appendChild(title);
-                    limitMsg.appendChild(desc);
-                    limitMsg.appendChild(btn);
-                    document.querySelector('.mc-content-scroll').appendChild(limitMsg);
-                }
-                limitMsg.style.display = 'flex';
-                return;
-            }
-
-            if (confirmStep) confirmStep.style.display = 'none';
-            if (uploadStep) uploadStep.style.display = 'none';
-            const loadingBox = document.getElementById('mc-loading-box');
-            if (loadingBox) loadingBox.style.display = 'block';
+                const loadingBox = document.getElementById('mc-loading-box');
+                if (loadingBox) loadingBox.style.display = 'block';
 
 
-            // 🚨 VALIDAÇÃO BÁSICA NO FRONT 🚨
-            const keyToUse = window.PROVOU_LEVOU_API_KEY;
-            if (!keyToUse || keyToUse.includes("COLOQUE_A_CHAVE_AQUI")) {
-                window.showErrorPopup();
-                return;
-            }
-
-            const prodImgTag = document.querySelector(
-                '.image-show .box-img.active .zoom img, ' +
-                '.image-show .box-img .zoom img, ' +
-                '.image-show img, ' +
-                '.product__media img, ' +
-                'img.product-featured-media, ' +
-                '.product-single__photo'
-            );
-            const prodImg = prodImgTag
-                ? (prodImgTag.dataset.src || prodImgTag.dataset.lazy || prodImgTag.src)
-                : (document.querySelector('meta[property="og:image"]')?.content || '');
-            const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
-
-
-
-            LOG.group('Enviando para webhook');
-            LOG.info('Produto: ' + prodName);
-            LOG.info('Imagem do produto: ' + (prodImg || '(não encontrada)'));
-            LOG.info('WhatsApp: informado');
-            LOG.info('Categoria: ' + currentProduct.category + '  |  Fit: ' + currentProduct.fit);
-
-            document.getElementById('mc-step-upload').style.display = 'none';
-            document.getElementById('mc-loading-box').style.display = 'flex';
-
-            try {
-                const fd = new FormData();
-                fd.append('person_image', userPhoto);
-                fd.append('whatsapp', '55' + phoneInput.value.replace(/\D/g, ''));
-                fd.append('phone_raw', phoneInput.value);
-                fd.append('product_name', prodName);
-                fd.append('product_type', currentProduct.category);
-                fd.append('product_fit', currentProduct.fit);
-
-                // 👉 INJETA A CHAVE NO FORM DATA PRO N8N LER
-                fd.append('api_key', keyToUse);
-
-                if (marianaType === 'calca') {
-                    const cinVal = document.getElementById('mc-cin-val')?.value || '';
-                    const quadVal = document.getElementById('mc-quad-val')?.value || '';
-                    fd.append('height', '');
-                    fd.append('weight', '');
-                    fd.append('cintura', cinVal);
-                    fd.append('quadril', quadVal);
-                    LOG.info('Medidas calça: cintura=' + cinVal + ' quadril=' + quadVal);
-                } else if (marianaType === 'blusa') {
-                    const hVal = document.getElementById('mc-blusa-h-val')?.value || '';
-                    const wVal = document.getElementById('mc-blusa-w-val')?.value || '';
-                    fd.append('height', hVal);
-                    fd.append('weight', wVal);
-                    fd.append('cintura', '');
-                    fd.append('quadril', '');
-                    LOG.info('Medidas blusa: altura=' + hVal + ' peso=' + wVal);
-                } else {
-                    fd.append('height', '');
-                    fd.append('weight', '');
-                    fd.append('cintura', '');
-                    fd.append('quadril', '');
-                    LOG.info('Produto sem tabela Mariana — medidas enviadas vazias');
+                // 🚨 VALIDAÇÃO BÁSICA NO FRONT 🚨
+                const keyToUse = window.PROVOU_LEVOU_API_KEY;
+                if (!keyToUse || keyToUse.includes("COLOQUE_A_CHAVE_AQUI")) {
+                    window.showErrorPopup();
+                    return;
                 }
 
-                if (prodImg) {
-                    try {
-                        LOG.info('Baixando imagem do produto para anexar...');
-                        const b = await fetch(prodImg).then(r => r.blob());
-                        fd.append('product_image', b, 'p.png');
-                        LOG.ok('Imagem do produto anexada (' + (b.size / 1024).toFixed(0) + 'KB)');
-                    } catch (imgErr) {
-                        LOG.warn('Não foi possível baixar imagem do produto: ' + imgErr.message);
+                const prodImgTag = document.querySelector(
+                    '.image-show .box-img.active .zoom img, ' +
+                    '.image-show .box-img .zoom img, ' +
+                    '.image-show img, ' +
+                    '.product__media img, ' +
+                    'img.product-featured-media, ' +
+                    '.product-single__photo'
+                );
+                const prodImg = prodImgTag
+                    ? (prodImgTag.dataset.src || prodImgTag.dataset.lazy || prodImgTag.src)
+                    : (document.querySelector('meta[property="og:image"]')?.content || '');
+                const prodName = document.querySelector('h1.product-name, h1.product__title, .product-single__title, h1')?.innerText || document.title;
+
+
+
+                LOG.group('Enviando para webhook');
+                LOG.info('Produto: ' + prodName);
+                LOG.info('Imagem do produto: ' + (prodImg || '(não encontrada)'));
+                LOG.info('WhatsApp: informado');
+                LOG.info('Categoria: ' + currentProduct.category + '  |  Fit: ' + currentProduct.fit);
+
+                document.getElementById('mc-step-upload').style.display = 'none';
+                document.getElementById('mc-loading-box').style.display = 'flex';
+
+                try {
+                    const fd = new FormData();
+                    fd.append('person_image', userPhoto);
+                    fd.append('whatsapp', '55' + phoneInput.value.replace(/\D/g, ''));
+                    fd.append('phone_raw', phoneInput.value);
+                    fd.append('product_name', prodName);
+                    fd.append('product_type', currentProduct.category);
+                    fd.append('product_fit', currentProduct.fit);
+
+                    // 👉 INJETA A CHAVE NO FORM DATA PRO N8N LER
+                    fd.append('api_key', keyToUse);
+
+                    if (marianaType === 'calca') {
+                        const cinVal = document.getElementById('mc-cin-val')?.value || '';
+                        const quadVal = document.getElementById('mc-quad-val')?.value || '';
+                        fd.append('height', '');
+                        fd.append('weight', '');
+                        fd.append('cintura', cinVal);
+                        fd.append('quadril', quadVal);
+                        LOG.info('Medidas calça: cintura=' + cinVal + ' quadril=' + quadVal);
+                    } else if (marianaType === 'blusa') {
+                        const hVal = document.getElementById('mc-blusa-h-val')?.value || '';
+                        const wVal = document.getElementById('mc-blusa-w-val')?.value || '';
+                        fd.append('height', hVal);
+                        fd.append('weight', wVal);
+                        fd.append('cintura', '');
+                        fd.append('quadril', '');
+                        LOG.info('Medidas blusa: altura=' + hVal + ' peso=' + wVal);
+                    } else {
+                        fd.append('height', '');
+                        fd.append('weight', '');
+                        fd.append('cintura', '');
+                        fd.append('quadril', '');
+                        LOG.info('Produto sem tabela Mariana — medidas enviadas vazias');
                     }
-                } else {
-                    LOG.warn('Imagem do produto não encontrada no DOM — enviando sem ela');
-                }
 
-                calculateFinalSize();
-                LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
-                const t0 = Date.now();
+                    if (prodImg) {
+                        try {
+                            LOG.info('Baixando imagem do produto para anexar...');
+                            const b = await fetch(prodImg).then(r => r.blob());
+                            fd.append('product_image', b, 'p.png');
+                            LOG.ok('Imagem do produto anexada (' + (b.size / 1024).toFixed(0) + 'KB)');
+                        } catch (imgErr) {
+                            LOG.warn('Não foi possível baixar imagem do produto: ' + imgErr.message);
+                        }
+                    } else {
+                        LOG.warn('Imagem do produto não encontrada no DOM — enviando sem ela');
+                    }
 
-                const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
-                const elapsed = Date.now() - t0;
-                LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
+                    calculateFinalSize();
+                    LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
+                    const t0 = Date.now();
 
-                const contentType = res.headers.get("content-type") || "";
-                if (contentType.includes("application/json")) {
-                    const data = await res.json();
-                    if (data.error) {
-                        LOG.error('Erro da API retornado via JSON:', data.error);
+                    const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                    const elapsed = Date.now() - t0;
+                    LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
+
+                    const contentType = res.headers.get("content-type") || "";
+                    if (contentType.includes("application/json")) {
+                        const data = await res.json();
+                        if (data.error) {
+                            LOG.error('Erro da API retornado via JSON:', data.error);
+                            LOG.end();
+                            document.getElementById('mc-loading-box').style.display = 'none';
+                            document.getElementById('mc-step-upload').style.display = 'block';
+                            if (data.error === "Chave invalida, vencida ou inativa." || data.error.includes("vencida ou inativa")) {
+                                window.showErrorPopup();
+                            } else {
+                                window.showErrorPopup();
+                            }
+                            return;
+                        }
+                    }
+
+                    if (res.ok) {
+                        // Incrementa contador de uso diário
+                        localStorage.setItem(storageKey, String(usedToday + 1));
+
+                        const blob = await res.blob();
+                        LOG.ok('Imagem gerada com sucesso! (' + (blob.size / 1024).toFixed(0) + 'KB, ' + blob.type + ')');
+                        LOG.end();
+
+                        document.getElementById('mc-loading-box').style.display = 'none';
+                        document.getElementById('mc-final-view-img').src = URL.createObjectURL(blob);
+
+                        // Exibe recomendação de tamanho se for calça e medidas foram informadas
+                        const recSize = calculateFinalSize();
+                        const recBox = document.getElementById('mc-size-recommendation');
+                        if (recSize && recBox) {
+                            document.getElementById('mc-rec-size-label').textContent = recSize;
+                            document.getElementById('mc-rec-size-desc').textContent = marianaType === 'calca' ? 'Baseado nas suas medidas de cintura e quadril' : 'Baseado no seu peso e altura';
+                            recBox.style.display = 'block';
+                        } else if (recBox) {
+                            recBox.style.display = 'none';
+                        }
+
+                        document.querySelector('.mc-card-ia').classList.add('is-result');
+                        document.getElementById('mc-step-result').style.display = 'flex';
+                        if (typeof _mcCheckProvasRestantes === 'function') _mcCheckProvasRestantes();
+                        loadRelatedProducts();
+                        LOG.ok('Resultado exibido.' + (recSize ? ' Tamanho recomendado: ' + recSize : ''));
+
+                    } else if (res.status === 401 || res.status === 403) {
+                        LOG.error('Webhook retornou erro de permissão: ' + res.status);
                         LOG.end();
                         document.getElementById('mc-loading-box').style.display = 'none';
                         document.getElementById('mc-step-upload').style.display = 'block';
-                        if (data.error === "Chave invalida, vencida ou inativa." || data.error.includes("vencida ou inativa")) {
-                            window.showErrorPopup();
-                        } else {
-                            window.showErrorPopup();
-                        }
-                        return;
+                        window.showErrorPopup();
+                    } else {
+                        LOG.error('Webhook retornou erro: ' + res.status);
+                        LOG.end();
+                        throw new Error('HTTP ' + res.status);
                     }
-                }
-
-                if (res.ok) {
-                    // Incrementa contador de uso diário
-                    localStorage.setItem(storageKey, String(usedToday + 1));
-
-                    const blob = await res.blob();
-                    LOG.ok('Imagem gerada com sucesso! (' + (blob.size / 1024).toFixed(0) + 'KB, ' + blob.type + ')');
-                    LOG.end();
-
-                    document.getElementById('mc-loading-box').style.display = 'none';
-                    document.getElementById('mc-final-view-img').src = URL.createObjectURL(blob);
-
-                    // Exibe recomendação de tamanho se for calça e medidas foram informadas
-                    const recSize = calculateFinalSize();
-                    const recBox = document.getElementById('mc-size-recommendation');
-                    if (recSize && recBox) {
-                        document.getElementById('mc-rec-size-label').textContent = recSize;
-                        document.getElementById('mc-rec-size-desc').textContent = marianaType === 'calca' ? 'Baseado nas suas medidas de cintura e quadril' : 'Baseado no seu peso e altura';
-                        recBox.style.display = 'block';
-                    } else if (recBox) {
-                        recBox.style.display = 'none';
-                    }
-
-                    document.querySelector('.mc-card-ia').classList.add('is-result');
-                    document.getElementById('mc-step-result').style.display = 'flex';
-                    if (typeof _mcCheckProvasRestantes === 'function') _mcCheckProvasRestantes();
-                    loadRelatedProducts();
-                    LOG.ok('Resultado exibido.' + (recSize ? ' Tamanho recomendado: ' + recSize : ''));
-
-                } else if (res.status === 401 || res.status === 403) {
-                    LOG.error('Webhook retornou erro de permissão: ' + res.status);
+                } catch (e) {
+                    console.error('------- ERRO DETALHADO capturado no CATCH -------');
+                    console.error('Nome:', e.name);
+                    console.error('Mensagem:', e.message);
+                    console.error('Stack:', e.stack);
+                    console.error('-------------------------------------------------');
+                    LOG.error('Falha no fluxo de geração: ' + e.message, e);
                     LOG.end();
                     document.getElementById('mc-loading-box').style.display = 'none';
                     document.getElementById('mc-step-upload').style.display = 'block';
                     window.showErrorPopup();
-                } else {
-                    LOG.error('Webhook retornou erro: ' + res.status);
-                    LOG.end();
-                    throw new Error('HTTP ' + res.status);
                 }
-            } catch (e) {
-                console.error('------- ERRO DETALHADO capturado no CATCH -------');
-                console.error('Nome:', e.name);
-                console.error('Mensagem:', e.message);
-                console.error('Stack:', e.stack);
-                console.error('-------------------------------------------------');
-                LOG.error('Falha no fluxo de geração: ' + e.message, e);
-                LOG.end();
-                document.getElementById('mc-loading-box').style.display = 'none';
-                document.getElementById('mc-step-upload').style.display = 'block';
-                window.showErrorPopup();
-            }
-        };
+        
+
+
+
+            } finally {
+
+
+
+                window._provouLevouBusy = false;
+
+
+
+            }}
+
+
+
+        ;
 
         // Funcionalidade de adicionar ao carrinho removida conforme solicitado
 
