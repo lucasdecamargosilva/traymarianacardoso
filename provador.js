@@ -937,16 +937,7 @@
                 LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
                 const t0 = Date.now();
 
-                const res = await (async () => {
-                    let _d = 1500;
-                    for (let _i = 0; _i < 6; _i++) {
-                        const _r = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
-                        if (_r.ok || _r.status === 400 || _r.status === 401 || _r.status === 403) return _r;
-                        if (_i === 5) return _r;
-                        await new Promise(_x => setTimeout(_x, _d + Math.random() * 500));
-                        _d *= 2;
-                    }
-                })();
+                const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
                 const elapsed = Date.now() - t0;
                 LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
 
