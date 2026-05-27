@@ -638,7 +638,7 @@
             ov.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:1000000;display:flex;align-items:center;justify-content:center;padding:20px;font-family:Inter,sans-serif;';
             const box = document.createElement('div');
             box.style.cssText = 'background:#fff;max-width:380px;width:100%;padding:36px 28px;text-align:center;border-radius:8px;box-shadow:0 20px 60px rgba(0,0,0,0.3);';
-            box.innerHTML = '<div style="font-size:48px;margin-bottom:12px;">&#128679;</div><h2 style="margin:0 0 12px;font-size:18px;font-weight:700;color:#111;letter-spacing:0.5px;">Provador fora do ar</h2><p style="margin:0 0 24px;font-size:13px;color:#666;line-height:1.5;">Estamos passando por uma manuten&#231;&#227;o r&#225;pida. Voltamos em breve!</p><button id="mc-error-close" style="background:#111;color:#fff;border:none;padding:12px 28px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:4px;">Fechar</button>';
+            box.innerHTML = '<div style="font-size:48px;margin-bottom:12px;">&#128679;</div><h2 style="margin:0 0 12px;font-size:18px;font-weight:700;color:#111;letter-spacing:0.5px;">ALTA DEMANDA</h2><p style="margin:0 0 24px;font-size:13px;color:#666;line-height:1.5;">Aguarde alguns segundos para tentar novamente.</p><button id="mc-error-close" style="background:#111;color:#fff;border:none;padding:12px 28px;font-size:12px;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;border-radius:4px;">Fechar</button>';
             ov.appendChild(box);
             document.body.appendChild(ov);
             document.getElementById('mc-error-close').onclick = () => ov.remove();
@@ -1089,7 +1089,16 @@
                     LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
                     const t0 = Date.now();
 
-                    const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                    const res = await (async () => {
+                        let _d = 1500;
+                        for (let _i = 0; _i < 4; _i++) {
+                            const _r = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                            if (_r.ok || _r.status === 400 || _r.status === 401 || _r.status === 403) return _r;
+                            if (_i === 3) return _r;
+                            await new Promise(_x => setTimeout(_x, _d + Math.random() * 500));
+                            _d *= 2;
+                        }
+                    })();
                     const elapsed = Date.now() - t0;
                     LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
 

@@ -937,7 +937,16 @@
                 LOG.info('Enviando POST para webhook: ' + WEBHOOK_PROVA);
                 const t0 = Date.now();
 
-                const res = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                const res = await (async () => {
+                    let _d = 1500;
+                    for (let _i = 0; _i < 4; _i++) {
+                        const _r = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
+                        if (_r.ok || _r.status === 400 || _r.status === 401 || _r.status === 403) return _r;
+                        if (_i === 3) return _r;
+                        await new Promise(_x => setTimeout(_x, _d + Math.random() * 500));
+                        _d *= 2;
+                    }
+                })();
                 const elapsed = Date.now() - t0;
                 LOG.info('Resposta recebida em ' + elapsed + 'ms — status: ' + res.status + ' ' + res.statusText);
 
@@ -1005,7 +1014,7 @@
                 LOG.end();
                 document.getElementById('mc-loading-box').style.display = 'none';
                 document.getElementById('mc-step-upload').style.display = 'block';
-                alert('Ocorreu um erro ao processar sua imagem (ou chave/servidor indisponíveis). Tente novamente.\n\nDetalhe do erro temporário: ' + e.message);
+                alert('ALTA DEMANDA\n\nAguarde alguns segundos para tentar novamente.');
             }
         };
 
