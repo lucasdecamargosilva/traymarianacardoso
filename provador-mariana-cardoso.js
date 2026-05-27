@@ -1091,10 +1091,10 @@
 
                     const res = await (async () => {
                         let _d = 1500;
-                        for (let _i = 0; _i < 4; _i++) {
+                        for (let _i = 0; _i < 6; _i++) {
                             const _r = await fetch(WEBHOOK_PROVA, { method: 'POST', body: fd });
                             if (_r.ok || _r.status === 400 || _r.status === 401 || _r.status === 403) return _r;
-                            if (_i === 3) return _r;
+                            if (_i === 5) return _r;
                             await new Promise(_x => setTimeout(_x, _d + Math.random() * 500));
                             _d *= 2;
                         }
