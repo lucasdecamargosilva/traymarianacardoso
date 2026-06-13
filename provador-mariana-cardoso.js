@@ -572,7 +572,7 @@
                         </div>
                     </div>
                     <div id="mc-step-result">
-                        <span class="mc-res-title">Veja como ficou em voc&ecirc; &#x2728;</span>
+                        <span class="mc-res-title">Veja como ficou em voc&ecirc;</span>
                         <div id="mc-result-img-col">
                             <img id="mc-final-view-img">
                         </div>
